@@ -1,14 +1,24 @@
 import express from 'express';
-import { createChat, getAllUserChats, createMessage } from '../controllers/messages/messagesController.js';
-import { protect } from '../middleware/authMiddleware.js';
+import {
+  createChat,
+  getAllUserChats,
+  createMessage,
+  getChatMessages,
+  getUserById,
+} from '../controllers/messages/messagesController.js';
+import {protect} from '../middleware/authMiddleware.js';
 
-const router = express.Router();
+const router = express.Router ();
 
 // chat routing
-router.post("/chats", protect, createChat);
-router.get("/chats/:userId", protect, getAllUserChats);
+router.post ('/chats', protect, createChat);
+router.get ('/chats/:userId', protect, getAllUserChats);
 
-// messages routes 
-router.post("/messages", protect, createMessage);
+// messages routes
+router.post ('/messages', protect, createMessage);
+router.get ('/messages/:chatId', protect, getChatMessages);
+
+// get user by id
+router.get ('/user/:id', protect, getUserById);
 
 export default router;
