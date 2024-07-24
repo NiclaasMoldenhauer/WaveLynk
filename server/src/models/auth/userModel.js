@@ -37,6 +37,30 @@ const userSchema = new mongoose.Schema (
       default: 'user',
     },
 
+    friends: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
+
+    friendRequests: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
+
+    lastSeen: {
+      type: Date,
+      default: Date.now(),
+    },
+
+    theme: {
+      type: String,
+      default: 'dark',
+    },
+
     isVerified: {
       type: Boolean,
       default: false,
