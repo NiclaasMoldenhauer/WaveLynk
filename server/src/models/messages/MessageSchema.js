@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { mongo } from 'mongoose';
 
 const MessageSchema = new mongoose.Schema ({
   sender: {
@@ -12,4 +12,25 @@ const MessageSchema = new mongoose.Schema ({
     ref: 'User',
     required: true,
   },
-});
+
+  content: {
+    type: String,
+    required: true,
+  },
+
+  chatId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Chat',
+    required: true,
+  },
+
+  status: {
+    type: String,
+    enum: ['sent', 'delivered', 'read'],
+    default: 'sent',
+  },
+},
+{ timestamps: true }
+);
+
+export default mongoose.model ('Message', MessageSchema)
