@@ -29,3 +29,21 @@ export const getAllUserChats = expressAsyncHandler(async (req, res) => {
       res.status(500).json({ message: error.message });
     }
   });
+
+  export const createMessage = expressAsyncHandler(async (req, res) => {
+      try {
+        const newMessage = new Message (req.body)
+
+
+        const message = await newMessage.save()
+        // update chat with new message
+        await Chat.findByIdAndUpdate(req.body.chatId, {
+          lastModified: Date.now(),
+        })
+
+        res.status(200).json(message)
+      } catch (error) {
+        console.log("Fehler beim Senden der Nachricht...", error.message);
+        res.status(500).json({ message: error.message });
+      }
+  })
