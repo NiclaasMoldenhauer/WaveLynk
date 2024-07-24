@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bestätige deine E-Mail</title>
+    <style>
+        * {
+            text-decoration: none;
+        }
+
+        .container {
+            margin: 0 auto;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .btn-link {
+            display: inline-block;
+            padding: 20px 40px;
+            background-color: #007bff;
+            color: #fff !important;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-size: 18px;
+        }
+
+        img {
+            width: 50px;
+            border-radius: 50%;
+            margin-top: 20px;
+        }
+
+        h2 {
+            color: #007bff;
+            font-size: 24px;
+        }
+
+        p {
+            font-size: 16px;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #ddd;
+            margin: 20px 0;
+        }
+
+        .footer {
+            font-size: 0.7rem;
+            color: #666;
+            margin-top: 20px;
+        }
+        .footer a {
+            color: #007bff;
+            word-break: break-all;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <img src="https://static.vecteezy.com/system/resources/previews/002/399/626/original/water-wave-symbol-and-icon-logo-free-vector.jpg"
+            alt="" />
+        <h2>{{subject}}</h2>
+        <hr />
+        <p>Hallo {{name}},</p>
+        <p>Bestätige deine E-Mail Adresse, indem du auf den folgenden Link klickst:</p>
+        <div>
+            <a href="{{link}}" class="btn-link">Bestätigen</a>
+        </div>
+        <p>Dieser Link ist 24 Stunden gültig.</p>
+        <p>Falls du keinen Account erstellt hast, ignoriere diese E-Mail.</p>
+        <hr />
+        <p>Viele Grüße,</p>
+        <p><b>WaveLynk</b> Team</p>
+        <div class="footer">
+            <p>Falls du Probleme hast, den "Bestätigen" Button zu drücken, kopiere und füge die URL in deinen Webbrowser
+                ein.</p>
+            <p><a href="{{link}}">{{link}}</a></p>
+            <p>Diese E-Mail wurde automatisch erstellt. Bitte nicht antworten.</p>
+            <p>Deine Daten werden nicht an Dritte weitergegeben.</p>
+        </div>
+    </div>
+</body>
+
+</html>
