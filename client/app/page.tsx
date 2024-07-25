@@ -7,8 +7,7 @@ export default function Home() {
 
   return (
     <div className="relative px-[8rem] py-10 h-full">
-      <main className="h-full flex backdrop-blur-sm rounded-3xl bg-white/65 dark:bg-[#262626]/90 border-2 border-white dark:border-[#3C3C3C]/65 shadow-2xl overflow-hidden"
-      >
+      <main className="h-full flex backdrop-blur-sm rounded-3xl bg-white/65 dark:bg-[#262626]/90 border-2 border-white dark:border-[#3C3C3C]/65 shadow-2xl overflow-hidden">
         <Sidebar />
         <div className="flex-1 flex"></div>
       </main>
