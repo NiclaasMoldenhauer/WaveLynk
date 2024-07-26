@@ -1,11 +1,12 @@
 "use client";
-import { useUserContext } from "@/context/userContext";
 import { searchIcon } from "@/utils/Icons";
 import React, { useCallback, useEffect, useState } from "react";
 import lodash from "lodash";
+import { useUserContext } from "@/context/userContext";
+
 
 function SearchInput() {
-  const { searchUsers, searchResults, setSearchResutls } = useUserContext();
+  const { searchUsers, searchResults, setSearchResults } = useUserContext();
   const [search, setSearch] = useState("");
 
   // Suchfunktion debouncen mit 500ms delay
@@ -16,6 +17,7 @@ function SearchInput() {
     []
   );
 
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.trim();
     setSearch(query);
@@ -24,7 +26,7 @@ function SearchInput() {
       debouncedSearchUsers(query);
     } else {
       debouncedSearchUsers.cancel();
-      setSearchResutls([]);
+      setSearchResults([]);
     }
   };
 

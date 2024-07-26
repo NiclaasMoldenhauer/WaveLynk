@@ -1,16 +1,17 @@
 "use client";
-import { addFriend, pending, userCheck } from "@/utils/Icons";
 import { IUser } from "@/app/types/type";
 import { useUserContext } from "@/context/userContext";
+import { addFriend, pending, userCheck } from "@/utils/Icons";
 import Image from "next/image";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+
 
 function SearchResults() {
   const { searchResults, sendFriendRequest } = useUserContext();
   const userId = useUserContext().user?._id;
 
-  const [requests, setRequests] = useState([]);
+  const [requests, setRequests] = useState({});
 
   const handleFriendRequest = async (recipientId: string) => {
     await sendFriendRequest({ recipientId });
@@ -27,7 +28,7 @@ function SearchResults() {
           const isFriend = friends?.find((friend) => friend === userId);
           const requestSent =
             friendRequests.find((friend) => friend === userId) ||
-            // @ts-ignore   ----> ignoriert typescript fehler
+            // @ts-ignore
             requests[user._id];
 
           return (

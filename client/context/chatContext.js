@@ -6,7 +6,7 @@ import { useUserContext } from "./userContext";
 
 const ChatContext = React.createContext();
 
-const serverUrl = "http://localhost:5000";
+const serverUrl = "http://localhost:8000";
 
 export const ChatProvider = ({ children }) => {
   const { user, setSearchResults, setUser } = useUserContext();
@@ -238,7 +238,7 @@ export const ChatProvider = ({ children }) => {
       (participant) => participant !== userId
     );
 
-    const data = await getUserbyId(isNotLoggedInUser);
+    const data = await getUserById(isNotLoggedInUser);
     setActiveChatData(data);
   };
 

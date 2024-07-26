@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@edgestore/react": "^0.2.1",
+    "@edgestore/server": "^0.2.1",
     "@fortawesome/fontawesome-free": "^6.5.2",
     "axios": "^1.7.2",
     "emoji-picker-react": "^4.11.1",
