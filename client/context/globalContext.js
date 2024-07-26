@@ -3,21 +3,22 @@ import React from 'react';
 const globalContext = React.createContext ();
 
 export const GlobalProvider = ({children}) => {
-  const [currentView, setCurrentView] = React.useState ('allChats');
+  const [currentView, setCurrentView] = React.useState ('all-Chats');
   const [showFriendProfile, setShowFriendProfile] = React.useState (false);
   const [showProfile, setShowProfile] = React.useState (false);
 
-  const handleProfileToggle = show => {
+  const handleProfileToggle = (show) => {
     setShowProfile (show);
   };
 
-  const handleViewChange = view => {
+  const handleViewChange = (view) => {
     setCurrentView (view);
   };
 
-  const handleFriendProfile = show => {
+  const handleFriendProfile = (show) => {
     setShowFriendProfile (show);
   };
+  
 
   return (
     <globalContext.Provider
