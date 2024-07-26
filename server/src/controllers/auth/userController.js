@@ -52,7 +52,19 @@ export const registerUser = asyncHandler (async (req, res) => {
   });
 
   if (user) {
-    const {_id, name, email, role, photo, bio, isVerified} = user;
+    const {
+      _id, 
+      name, 
+      email, 
+      role, 
+      photo, 
+      bio, 
+      isVerified,
+      theme,
+      friendRequests,
+      lastSeen,
+      friends,
+    } = user;
 
     // 201 Created
     res.status (201).json ({
@@ -64,6 +76,10 @@ export const registerUser = asyncHandler (async (req, res) => {
       bio,
       isVerified,
       token,
+      theme,
+      friendRequests,
+      lastSeen,
+      friends,
     });
   } else {
     res.status (400);
@@ -100,7 +116,19 @@ export const loginUser = asyncHandler (async (req, res) => {
   const token = generateToken (userExists._id);
 
   if (userExists && isMatch) {
-    const {_id, name, email, role, photo, bio, isVerified} = userExists;
+    const {
+      _id, 
+      name, 
+      email, 
+      role, 
+      photo, 
+      bio, 
+      isVerified,
+      theme,
+      friendRequests,
+      lastSeen,
+      friends,
+    } = userExists;
 
     // set the token in the cookie
     res.cookie ('token', token, {
@@ -120,7 +148,10 @@ export const loginUser = asyncHandler (async (req, res) => {
       photo,
       bio,
       isVerified,
-      token,
+      theme,
+      friendRequests,
+      lastSeen,
+      friends,
     });
   } else {
     res.status (400).json ({message: 'Fehler beim Einloggen!'});
@@ -152,11 +183,12 @@ export const updateUser = asyncHandler (async (req, res) => {
   const user = await User.findById (req.user._id);
   if (user) {
     // user properties update
-    const {name, photo, bio} = req.body;
+    // const {name, photo, bio} = req.body;
     // update user
     user.name = req.body.name || user.name;
     user.photo = req.body.photo || user.photo;
     user.bio = req.body.bio || user.bio;
+    user.theme = req.body.theme || user.theme;
 
     const updated = await user.save ();
 
@@ -168,6 +200,8 @@ export const updateUser = asyncHandler (async (req, res) => {
       photo: updated.photo,
       bio: updated.bio,
       isVerified: updated.isVerified,
+      theme: updated.theme,
+      friendRequests: updated.friendRequests,
     });
   } else {
     res.status (404).json ({message: 'User nicht gefunden!'});
@@ -463,3 +497,118 @@ export const changePassword = asyncHandler (async (req, res) => {
     .json ({ message: 'Falsches Passwort. Bitte versuche es erneut!' });
   }
 });
+
+// search users
+export const searchUsers = asyncHandler (async (req, res) => {
+  const query = req.query.q;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 5;
+  const skip = (page - 1) * limit;
+
+  try {
+    const userId = req.user._id;
+
+    // user mit ID aus der Datenbank auswerten ---> case Sensitive ---> teil treffer
+    const users = await User.find ({
+      name: { $regex: query, $options: 'i' },
+      _id: { $ne: userId },
+    })
+    .select ('-password')
+    .limit(limit)
+    .skip(skip)
+
+    // Anzahl der Treffer
+    const count = await User.countDocuments ({
+      name: { $regex: query, $options: 'i' },
+      _id: { $ne: userId },
+    });
+
+    res.status (200).json ({
+      data: users,
+      currentPage: page,
+      totalPages: Math.ceil (totalUsers / limit),
+      totalResults: totalUsers,
+    })
+  } catch (error) {
+    console.log("Fehler bei Nutzersuche: ", error);
+    res.status (500).json ({ message: "Nutzer konnten nicht gefunden werden" });
+  }
+})
+
+// friend request
+export const friendRequest = asyncHandler (async (req, res) => {
+  try {
+    const requestingUser = req.user._id;
+
+    const { recipientId } = req.body;
+
+    // recipientId ist die ID des Empfängers
+    const recipient = await User.findById(recipientId);
+
+    // check ob die Empfäner existiert
+    if (!recipient) {
+      return res
+      .status (404)
+      .json ({ message: 'Empfänger nicht gefunden!' });
+    }
+
+    // check ob der Nutzer bereits mit dem recipient befreundet ist
+    if (recipient.friends.includes(requestingUser)) {
+      return res
+      .status (400)
+      .json ({ message: 'Du bist bereits mit diesem Nutzer befreundet!' });
+    }
+
+    // check ob der Nutzer bereits eine Freundschaftsanfrage gesendet hat
+    if (recipient.friends.includes(requestingUser)) {
+      return res
+      .status (400)
+      .json ({ message: 'Du hast bereits eine Freundschaftsanfrage gesendet!' });
+    }
+
+    // freundschaftsanfrage verschicken
+    recipient.friendRequests.push(requestingUser);
+    await recipient.save();
+
+    res.status (200).json ({ message: 'Anfrage gesendet!' });
+  } catch (error) {
+    console.log("Fehler beim versenden der Freundschaftsanfrage: ", error);
+    res.status (500).json ({ message: "Fehler beim versenden der Freundschaftsanfrage" });
+  }
+})
+
+// Freundschaftsanfrage akzeptieren
+export const acceptFriendRequest = asyncHandler (async (req, res) => {
+  try {
+    const recipientId = req.user._id;
+    const { requestingUserId } = req.body;
+
+    // Beide Nutzer in der Datenbank finden
+    const recipient = await User.findById(recipientId);
+    const requestingUser = await User.findById(requestingUserId);
+
+    if (!recipient || !requestingUser) {
+      return res.status(404).json({ message: 'Nutzer nicht gefunden!' });
+    }
+
+    // check ob die Freundschaftsanfrage existiert
+    const requestIndex = recipient.friendRequests.indexOf(requestingUserId);
+
+    if (requestIndex === -1) {
+      return res.status(400).json({ message: 'Anfrage wurde nicht gefunden!' });
+    }
+
+    // Füge Nutzer der Freundschaft hinzu und entferne die Freundschaftsanfrage
+    recipient.friends.push(requestingUserId);
+    requistingUser.friends.push(recipientId);
+    recipient.friendRequests.splice(requestIndex, 1);
+
+    await recipient.save();
+    await requestingUser.save();
+
+    res.status(200).json({ message: 'Freundschaftsanfrage akzeptiert!' });
+  } catch (error) {
+    console.log("Fehler beim akzeptieren der Freundschaftsanfrage: ", error);
+    res.status (500).json ({ message: "Fehler beim akzeptieren der Freundschaftsanfrage" });
+  }
+})

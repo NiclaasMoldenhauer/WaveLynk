@@ -153,24 +153,27 @@ export const UserContextProvider = ({children}) => {
   };
 
   // update user details
-  const updateUser = async (e, data) => {
-    e.preventDefault ();
+  const updateUser = async (data) => {
     setLoading (true);
+
+    console.log ('Daten zu Updaten: ', data);
 
     try {
       const res = await axios.patch (`${serverUrl}/api/v1/user`, data, {
         withCredentials: true, // send cookies zum server
       });
 
+      console.log ('Daten erfolgreich aktualisiert: ', res);
+
       // update user state
-      setUser (prevState => {
+      setUser ((prevState) => {
         return {
           ...prevState,
           ...res.data,
         };
       });
 
-      toast.success ('Bio erfolgreich aktualisiert!');
+      // toast.success ('Nutzerdaten erfolgreich aktualisiert!');
 
       setLoading (false);
     } catch (error) {
@@ -296,8 +299,11 @@ export const UserContextProvider = ({children}) => {
           withCredentials: true, // send cookies zum server
         }
       );
+
+      toast.success ('Passwort erfolgreich geändert!');
+      setLoading (false);
     } catch (error) {
-      console.log ('Fehler bei der Passwortänderung');
+      console.log ('Fehler bei der Passwortänderung', error);
       toast.error (error.response.data.message);
       setLoading (false);
     }
@@ -352,7 +358,7 @@ export const UserContextProvider = ({children}) => {
       getAllUsers ();
     } catch (error) {
       console.log ('Fehler beim Löschen des Nutzers', error);
-      toast.error (error.response?.data?.message || 'Nutzer konnte nicht gelöscht werden');
+      toast.error (error.response.data.message);
       setLoading (false);
     }
   };
@@ -377,6 +383,8 @@ export const UserContextProvider = ({children}) => {
     },
     [user.role]
   );
+
+  console.log ('User State', user);
 
   return (
     <UserContext.Provider

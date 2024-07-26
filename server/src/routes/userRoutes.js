@@ -1,5 +1,7 @@
 import express from 'express';
 import {
+  friendRequest,
+  acceptFriendRequest,
   getUser,
   loginUser,
   logoutUser,
@@ -11,6 +13,7 @@ import {
   forgotPassword,
   resetPassword,
   changePassword,
+  searchUsers,
 } from '../controllers/auth/userController.js';
 import {
   adminMiddleware,
@@ -54,5 +57,14 @@ router.post("/reset-password/:resetPasswordToken", resetPassword);
 
 // Passwort ändern ---> nur eingelogter Nutzer
 router.patch("/change-password", protect, changePassword);
+
+// search users
+router.get("/search-users", protect, searchUsers);
+
+// Friend request
+router.post("/friend-request", protect, friendRequest);
+
+// accept friend request
+router.post ("/friends/accept", protect, acceptFriendRequest);
 
 export default router;
