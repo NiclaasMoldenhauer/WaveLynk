@@ -1,19 +1,19 @@
 import express from 'express';
 import {
-  friendRequest,
   acceptFriendRequest,
+  changePassword,
+  forgotPassword,
+  friendRequest,
   getUser,
   loginUser,
   logoutUser,
   registerUser,
+  resetPassword,
+  searchUsers,
   updateUser,
   userLoginStatus,
   verifyEmail,
   verifyUser,
-  forgotPassword,
-  resetPassword,
-  changePassword,
-  searchUsers,
 } from '../controllers/auth/userController.js';
 import {
   adminMiddleware,

@@ -22,7 +22,7 @@ export const UserContextProvider = ({children}) => {
   });
 
   const [loading, setLoading] = useState (false);
-  // const [setSearchResults, setSearchResults] = useState ([]);
+  const [searchResults, setSearchResults] = useState ([]);
 
   // register user
   const registerUser = async e => {
@@ -365,7 +365,7 @@ export const UserContextProvider = ({children}) => {
   };
 
   // user suchen
-  const searchUsers = async (query) => {
+   const searchUsers = async (query) => {
     setLoading(true);
     try {
       const res = await axios.get(
@@ -375,7 +375,7 @@ export const UserContextProvider = ({children}) => {
           withCredentials: true,
         }
       );
-
+  
       setSearchResults(res.data);
       setLoading(false);
     } catch (error) {
@@ -463,12 +463,17 @@ export const UserContextProvider = ({children}) => {
         user,
         updateUser,
         emailVerification,
-        forgotPasswordEmail,
         verifyUser,
-        changePassword,
+        forgotPasswordEmail,
         resetPassword,
-        deleteUser,
+        changePassword,
         allUsers,
+        deleteUser,
+        searchResults,
+        searchUsers,
+        setSearchResults,
+        sendFriendRequest,
+        acceptFriendRequest,
       }}
     >
       {children}

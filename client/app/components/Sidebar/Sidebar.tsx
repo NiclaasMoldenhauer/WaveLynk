@@ -38,6 +38,7 @@ const navButtons = [
     id: 2,
     name: "Requests",
     icon: group,
+    slug: "requests",
     notification: true,
   },
 ];

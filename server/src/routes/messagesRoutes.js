@@ -15,7 +15,7 @@ router.post ('/chats', protect, createChat);
 router.get ('/chats/:userId', protect, getAllUserChats);
 
 // messages routes
-router.post ('/messages', protect, createMessage);
+router.post ('/message', protect, createMessage);
 router.get ('/messages/:chatId', protect, getChatMessages);
 
 // get user by id

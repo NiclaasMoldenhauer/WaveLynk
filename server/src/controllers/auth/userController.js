@@ -499,7 +499,7 @@ export const changePassword = asyncHandler (async (req, res) => {
 });
 
 // search users
-export const searchUsers = asyncHandler (async (req, res) => {
+export const searchUsers = asyncHandler(async (req, res) => {
   const query = req.query.q;
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 5;
@@ -518,7 +518,7 @@ export const searchUsers = asyncHandler (async (req, res) => {
     .skip(skip)
 
     // Anzahl der Treffer
-    const count = await User.countDocuments ({
+    const totalUsers = await User.countDocuments ({
       name: { $regex: query, $options: 'i' },
       _id: { $ne: userId },
     });
@@ -600,7 +600,7 @@ export const acceptFriendRequest = asyncHandler (async (req, res) => {
 
     // Füge Nutzer der Freundschaft hinzu und entferne die Freundschaftsanfrage
     recipient.friends.push(requestingUserId);
-    requistingUser.friends.push(recipientId);
+    requestingUser.friends.push(recipientId);
     recipient.friendRequests.splice(requestIndex, 1);
 
     await recipient.save();
