@@ -2,6 +2,7 @@
 import React from "react";
 import { UserContextProvider } from "../context/userContext";
 import { GlobalProvider } from "../context/globalContext";
+import { ChatProvider } from "@/context/chatContext";
 
 interface Props {
   children: React.ReactNode;
@@ -10,7 +11,9 @@ interface Props {
 function UserProvider({ children }: Props) {
   return (
     <UserContextProvider>
-      <GlobalProvider>{children}</GlobalProvider>
+      <GlobalProvider>
+        <ChatProvider>{children}</ChatProvider>
+      </GlobalProvider>
     </UserContextProvider>
   );
 }

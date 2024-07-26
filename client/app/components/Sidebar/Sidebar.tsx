@@ -1,20 +1,25 @@
 "use client";
 import { useUserContext } from "@/context/userContext";
-import { 
-  archive, 
-  group, 
-  inbox, 
-  moon, 
-  sun, 
-  database 
+import {
+  archive,
+  group,
+  inbox,
+  moon,
+  sun,
+  database,
+  chat,
 } from "@/utils/Icons";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { gradientText } from "@/utils/TailwindStyles";
 import { useGlobalContext } from "@/context/globalContext";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-
-
+import SearchInput from "../SearchInput/SearchInput";
+import SearchResults from "../SearchResults/SearchResults";
+import { IChat, IUser } from "@/app/types/type";
+import { useChatContext } from "@/context/chatContext";
+import ChatItem from "../ChatItem/ChatItem";
+import FriendRequests from "../FriendRequests/FriendRequests";
 
 const navButtons = [
   {
@@ -38,7 +43,8 @@ const navButtons = [
 ];
 
 function Sidebar() {
-  const { user, updateUser } = useUserContext();
+  const { user, updateUser, searchResults } = useUserContext();
+  const { allChatsData, handleSelectedChat, selectedChat } = useChatContext();
   const {
     showProfile,
     handleProfileToggle,
@@ -67,12 +73,11 @@ function Sidebar() {
   return (
     <div className="w-[22rem] flex border-r-2 border-white dark:border-[#3C3C3C]/60">
       <div className="p-4 flex flex-col justify-between items-center border-r-2 border-white dark:border-[#3C3C3C]/60">
-        <div 
-        className="profile flex flex-col items-center"
-        onClick={() => {
-          handleProfileToggle(true) 
-        } 
-        }
+        <div
+          className="profile flex flex-col items-center"
+          onClick={() => {
+            handleProfileToggle(true);
+          }}
         >
           <Image
             src={photo}
@@ -93,8 +98,8 @@ function Sidebar() {
                 } relative p-1 flex items-center text-[#454e56] dark:text-white/65`}
                 onClick={() => {
                   setActiveNav(btn.id);
-                  handleViewChange(btn.slug)
-                  handleProfileToggle(false)
+                  handleViewChange(btn.slug);
+                  handleProfileToggle(false);
                 }}
               >
                 {btn.icon}
@@ -113,7 +118,6 @@ function Sidebar() {
             className={`${
               user?.theme === "light"
                 ? `inline-block bg-clip-text text-transparent bg-gradient-to-r from-[#0e18cd] via-[#1e6bb8] to-[#368eeb]`
-
                 : ""
             }`}
             onClick={() => lightTheme()}
@@ -129,7 +133,98 @@ function Sidebar() {
           </button>
         </div>
       </div>
-      <div className="p-4 pb-4 flex-1"></div>
+      <div className="pb-4 flex-1">
+        <h2
+          className={`px-4 mt-6 font-bold text-2xl ${gradientText} dark:text-white`}
+        >
+          Nachrichten
+        </h2>
+        <div className="px-4 mt-2">
+          <SearchInput />
+        </div>
+
+        {searchResults?.data?.length > 0 && (
+          <div className="mt-4">
+            <h4
+              className={`px-4 grid grid-cols-[22px_1fr] items-center font-bold ${gradientText} dark:text-slate-200`}
+            >
+              {database} Suchergebnisse
+            </h4>
+            <SearchResults />
+          </div>
+        )}
+
+        {currentView === "all-chats" && (
+          <div className="mt-8">
+            <h4
+              className={`px-4 grid grid-cols-[22px_1fr] items-center font-bold ${gradientText} dark:text-slate-200`}
+            >
+              {chat}
+              <span>Alle Chats</span>
+            </h4>
+
+            <div className="mt-2">
+              {allChatsData.map((chat: IChat) => {
+                return (
+                  <React.Fragment key={chat._id}>
+                    {chat?.participantsData?.map((participant: IUser) => {
+                      return (
+                        <ChatItem
+                          key={participant._id}
+                          user={participant}
+                          active={
+                            !showProfile && selectedChat?._id === chat?._id
+                          }
+                          chatId={chat._id}
+                          onClick={() => {
+                            handleProfileToggle(false);
+                            handleSelectedChat(chat);
+                          }}
+                        />
+                      );
+                    })}
+                  </React.Fragment>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {currentView === "archived" && (
+          <div className="mt-8">
+            <h4
+              className={`px-4 grid grid-cols-[22px_1fr] items-center font-bold ${gradientText} dark:text-slate-200`}
+            >
+              <span>{archive}</span> <span>Archiviert</span>
+            </h4>
+            <div className="mt-2">
+              <p className="px-4 py-2 text-[#454e56] dark:text-white/65">
+              Keine archivierten Chats
+              </p>
+            </div>
+          </div>
+        )}
+
+        {currentView === "requests" && (
+          <div className="mt-8">
+            <h4
+              className={`px-4 grid grid-cols-[22px_1fr] items-center font-bold ${gradientText} dark:text-slate-200`}
+            >
+              <span className="w-[20px]">{group}</span>
+              <span>Freundschaftsanfragen</span>
+            </h4>
+            <div className="mt-2">
+              {friendRequests?.length > 0 ? (
+                <FriendRequests />
+              ) : (
+                <p className="px-4 py-2 text-[#454e56] dark:text-white/65">
+                  Keine Anfragen offen
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
