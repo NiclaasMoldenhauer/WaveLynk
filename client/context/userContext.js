@@ -22,6 +22,7 @@ export const UserContextProvider = ({children}) => {
   });
 
   const [loading, setLoading] = useState (false);
+  // const [setSearchResults, setSearchResults] = useState ([]);
 
   // register user
   const registerUser = async e => {
@@ -363,6 +364,68 @@ export const UserContextProvider = ({children}) => {
     }
   };
 
+  // user suchen
+  const searchUsers = async (query) => {
+    setLoading(true);
+    try {
+      const res = await axios.get(
+        `${serverUrl}/api/v1/search-users?q=${query}`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+
+      setSearchResults(res.data);
+      setLoading(false);
+    } catch (error) {
+      console.log("Fehler beim Suchen des Nutzers", error);
+      toast.error(error.response.data.message);
+      setLoading(false);
+    }
+  };
+
+
+  // freundesanfrage abschicken
+  const sendFriendRequest = async (id) => {
+    setLoading(true);
+    try {
+      const res = await axios.post(`${serverUrl}/api/v1/friend-request`, id, {
+        withCredentials: true,
+      });
+
+      toast.success("Freundschaftsanfrage gesendet");
+
+      setLoading(false);
+      return res.data;
+    } catch (error) {
+      console.log("Fehler beim Absenden der Freundschaftsanfrage", error);
+      toast.error(error.response.data.message);
+      setLoading(false);
+    }
+  };
+
+  // Freundesanfrage annehmen
+  const acceptFriendRequest = async (id) => {
+    setLoading(true);
+    try {
+      const res = await axios.post(`${serverUrl}/api/v1/friends/accept`, id, {
+        withCredentials: true,
+      });
+
+      toast.success("Freundschaftsanfrage angenommen");
+      // refresh der User Details
+      getUser();
+
+      setLoading(false);
+    } catch (error) {
+      console.log("Fehler beim Annehmen der Freundschaftsanfrage", error);
+      toast.error(error.response.data.message);
+      setLoading(false);
+    }
+  };
+
+
   useEffect (() => {
     const loginStatusGetUser = async () => {
       const isLoggedIn = await userLoginStatus ();
@@ -375,14 +438,16 @@ export const UserContextProvider = ({children}) => {
     loginStatusGetUser ();
   }, []);
 
-  useEffect (
-    () => {
-      if (user.role === 'admin') {
-        getAllUsers ();
-      }
-    },
-    [user.role]
-  );
+
+  
+  // useEffect (
+  //   () => {
+  //     if (user.role === 'admin') {
+  //       getAllUsers ();
+  //     }
+  //   },
+  //   [user.role]
+  // );
 
   console.log ('User State', user);
 
