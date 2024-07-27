@@ -44,7 +44,7 @@ function FriendProfile() {
           <span
             className={`pl-4 font-medium text-[16px] ${gradientText} dark:text-slate-200`}
           >
-            About
+            Über
           </span>
           <span className="pl-4 text-[#454e56] dark:text-white/65">
             {activeChatData?.bio}

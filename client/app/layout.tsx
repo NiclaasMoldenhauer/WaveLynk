@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
+import dotenv from "dotenv";
+dotenv.config ();
 import { Inter } from "next/font/google";
 import "./globals.css";
 import UserProvider from "@/providers/UserProvider";
 import { Toaster } from "react-hot-toast";
+import { EdgeStoreProvider } from "@/lib/edgestore";
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,7 +33,9 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <Toaster position="top-center" />
-        <UserProvider>{children}</UserProvider>
+        <UserProvider>
+          <EdgeStoreProvider>{children}</EdgeStoreProvider>
+        </UserProvider>
       </body>
     </html>
   );

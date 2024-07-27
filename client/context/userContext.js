@@ -9,7 +9,7 @@ const UserContext = React.createContext ();
 axios.defaults.withCredentials = true;
 
 export const UserContextProvider = ({children}) => {
-  const serverUrl = 'http://localhost:8000';
+  const serverUrl = 'http://localhost:5000';
 
   const router = useRouter ();
 
@@ -174,7 +174,7 @@ export const UserContextProvider = ({children}) => {
         };
       });
 
-      // toast.success ('Nutzerdaten erfolgreich aktualisiert!');
+      toast.success ('Nutzerdaten erfolgreich aktualisiert!');
 
       setLoading (false);
     } catch (error) {
