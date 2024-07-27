@@ -5,6 +5,7 @@ import { useGlobalContext } from "@/context/globalContext";
 import MainContent from "./components/MainContent/MainContent";
 import Header from "./components/Messages/Header/Header";
 import Body from "./components/Messages/Body/Body";
+import { useChatContext } from "@/context/chatContext";
 import TextArea from "./components/Messages/TextArea/TextArea";
 import Profile from "./components/Profile/Profile";
 import Online from "./components/Online/Online";
@@ -14,12 +15,11 @@ export default function Home() {
   useRedirect("/login");
 
   const { currentView, showFriendProfile, showProfile } = useGlobalContext();
-  const { selectedChat } = useGlobalContext();
+  const { selectedChat } = useChatContext();
 
-  console.log(currentView, showFriendProfile, showProfile);
-  //
+  
   return (
-    <div className="relative px-[8rem] py-10 h-full">
+    <div className="relative px-[5rem] py-7 h-full">
       <main
         className="h-full flex backdrop-blur-sm rounded-3xl bg-white/65 dark:bg-[#262626]/90 border-2 border-white 
       dark:border-[#3C3C3C]/65 shadow-2xl overflow-hidden"

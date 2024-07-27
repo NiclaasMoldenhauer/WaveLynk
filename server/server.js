@@ -1,5 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
+
+dotenv.config ();
+
 import cors from "cors";
 import connect from "./src/db/connect.js";
 import cookieParser from "cookie-parser";
@@ -9,12 +12,12 @@ import { Server } from "socket.io";
 import { createServer } from "node:http";
 import User from "./src/models/auth/userModel.js";
 
-dotenv.config ();
 
-const port = process.env.PORT || 8000;
+
+
+const port = process.env.PORT || 5000;
+
 const app = express ();
-
-
 const httpServer = new createServer(app);
 const io = new Server (httpServer, {
   cors: {
@@ -68,12 +71,12 @@ const removeUser = async (socketId) => {
     users = users.filter((user) => user.socketId !== socketId);
 
     // emit updated user to client
-    io.emit("user disconnected", updatedUser);
+    io.emit("User offline", updatedUser);
   }
 };
 
-io.on("connection", (socket) => {
-  console.log("a user connected", socket.id);
+io.on("Verbindung herstellen", (socket) => {
+  console.log("Ein User hat sich verbunden", socket.id);
 
   socket.on("add user", (userId) => {
     addUser(userId, socket.id);
