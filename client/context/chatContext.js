@@ -20,8 +20,8 @@ export const ChatProvider = ({ children }) => {
   const [messages, setMessages] = React.useState([]);
   const [allChatsData, setAllChatsData] = React.useState([]);
   const [selectedChat, setSelectedChat] = React.useState(null);
-  const [activeChatData, setActiveChatData] = React.useState([]);
-  const [socket, setSocket] = React.useState();
+  const [activeChatData, setActiveChatData] = React.useState({});
+  const [socket, setSocket] = React.useState(null);
   const [onlineUsers, setOnlineUsers] = React.useState([]);
   const [arrivedMessage, setArrivedMessage] = React.useState(null);
 
@@ -29,12 +29,12 @@ export const ChatProvider = ({ children }) => {
     // Erstelle einen Socket
     const newSocket = io(serverUrl);
 
-    newSocket.on("Verbindung herstellen", () => {
-      console.log("Verbindung hergestellt");
+    newSocket.on("connect", () => {
+      console.log("Connected to the server");
     });
 
-    newSocket.on("Verbindung beenden", (reason) => {
-      console.log("Verbindung beendet", reason);
+    newSocket.on("disconnect", (reason) => {
+      console.log("disconnected from the server", reason);
     });
 
     setSocket(newSocket);
@@ -56,7 +56,7 @@ export const ChatProvider = ({ children }) => {
         try {
           const usersOnline = await Promise.all(
             users.map(async (user) => {
-              const userData = await getUserbyId(user.userId);
+              const userData = await getUserById(user.userId);
               return userData;
             })
           );

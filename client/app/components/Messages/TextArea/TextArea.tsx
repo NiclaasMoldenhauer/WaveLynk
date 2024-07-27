@@ -99,7 +99,7 @@ function TextArea() {
         <div ref={emojieElemRef} className="absolute right-0 bott-[72px] z-10">
           <EmojiPicker
             onEmojiClick={(emojiObject) => {
-              setMessage((prev) => prev + emojiObject.emoji);
+              setMessage((prev: string) => prev + emojiObject.emoji);
             }}
           />
         </div>

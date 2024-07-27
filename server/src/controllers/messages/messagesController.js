@@ -53,15 +53,15 @@ export const createMessage = expressAsyncHandler (async (req, res) => {
 
 // get chat messages handler
 export const getChatMessages = expressAsyncHandler (async (req, res) => {
-  const {limit, offset} = req.query;
-  const limitNumber = parseInt (limit, 10) || 20;
-  const offsetNumber = parseInt (offset, 10) || 0;
+  // const {limit, offset} = req.query;
+  // const limitNumber = parseInt (limit, 10) || 20;
+  // const offsetNumber = parseInt (offset, 10) || 0;
 
   try {
     const messages = await Message.find ({chatId: req.params.chatId})
-      .sort ({createdAt: -1})
-      .limit (limitNumber)
-      .skip (offsetNumber);
+      // .sort ({createdAt: -1})
+      // .limit (limitNumber)
+      // .skip (offsetNumber);
 
     res.status (200).json (messages);
   } catch (error) {

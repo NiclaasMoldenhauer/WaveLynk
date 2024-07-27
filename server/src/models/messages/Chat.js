@@ -1,18 +1,17 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const ChatSchema = new mongoose.Schema(
+const ChatSchema = new mongoose.Schema (
   {
     participants: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true, 
+        ref: 'User',
       },
     ],
     messages: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Message",
+        ref: 'Message',
       },
     ],
 
@@ -21,7 +20,7 @@ const ChatSchema = new mongoose.Schema(
       default: Date.now,
     },
   },
-  { timestamps: true }
+  {timestamps: true}
 );
 
-export default mongoose.model("Chat", ChatSchema);
+export default mongoose.model ('Chat', ChatSchema);
