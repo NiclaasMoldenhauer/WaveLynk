@@ -6,7 +6,7 @@ import { useUserContext } from "./userContext";
 
 const ChatContext = React.createContext();
 
-const serverUrl = "http://localhost:8000";
+const serverUrl = "http://localhost:5000";
 
 export const ChatProvider = ({ children }) => {
   const { user, setSearchResults, setUser } = useUserContext();

@@ -6,21 +6,21 @@ import { IUser, IMessage } from "@/app/types/type";
 import { readReceipts } from "@/utils/Icons";
 import Image from "next/image";
 import React, { useCallback, useEffect, useState } from "react";
-import { on } from "events";
+import { on } from "events"; 
 
 interface ChatItemProps {
   user: IUser;
   active: boolean;
   onClick: () => void;
   chatId: string;
-}
+} 
 
 function ChatItem({ user, active, onClick, chatId }: ChatItemProps) {
   const { fetchAllMessages, onlineUsers } = useChatContext();
   const { photo } = user;
 
   const userId = useUserContext().user._id;
-
+  
   // lokaler State
   const [messages, setMessages] = useState<IMessage[]>([]);
 

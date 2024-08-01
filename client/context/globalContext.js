@@ -1,6 +1,6 @@
 import React from 'react';
 
-const globalContext = React.createContext ();
+const GlobalContext = React.createContext ();
 
 export const GlobalProvider = ({children}) => {
   const [currentView, setCurrentView] = React.useState ('all-Chats');
@@ -21,7 +21,7 @@ export const GlobalProvider = ({children}) => {
   
 
   return (
-    <globalContext.Provider
+    <GlobalContext.Provider
       value={{
         currentView,
         handleViewChange,
@@ -32,10 +32,10 @@ export const GlobalProvider = ({children}) => {
       }}
     >
       {children}
-    </globalContext.Provider>
+    </GlobalContext.Provider>
   );
 };
 
 export const useGlobalContext = () => {
-  return React.useContext (globalContext);
+  return React.useContext (GlobalContext);
 };

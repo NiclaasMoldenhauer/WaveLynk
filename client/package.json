@@ -17,6 +17,7 @@
     "axios": "^1.7.2",
     "dotenv": "^16.4.5",
     "emoji-picker-react": "^4.11.1",
+    "events": "^3.3.0",
     "lock": "^1.1.0",
     "lodash": "^4.17.21",
     "moment": "^2.30.1",
