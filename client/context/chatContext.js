@@ -14,6 +14,7 @@ export const ChatProvider = ({ children }) => {
   const userId = user?._id;
 
   const router = useRouter();
+  
 
   // state for chat
   const [chats, setChats] = React.useState([]);
