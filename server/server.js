@@ -51,6 +51,7 @@ const addUser = (userId, socketId) => {
   );
 };
 
+
 // get user 
 const getUser = (userId) => {
   return users.find((user) => user.userId === userId);
@@ -129,7 +130,7 @@ const server = async () => {
   try {
     await connect ();
 
-    app.listen (port, () => {
+    httpServer.listen (port, () => {
       console.log (`Server started on port ${port}`);
     });
   } catch (error) {
