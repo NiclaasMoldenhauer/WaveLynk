@@ -1,8 +1,5 @@
 import express from "express";
 import dotenv from "dotenv";
-
-dotenv.config ();
-
 import cors from "cors";
 import connect from "./src/db/connect.js";
 import cookieParser from "cookie-parser";
@@ -12,7 +9,7 @@ import { Server } from "socket.io";
 import { createServer } from "node:http";
 import User from "./src/models/auth/userModel.js";
 
-
+dotenv.config ();
 
 
 const port = process.env.PORT || 5000;
