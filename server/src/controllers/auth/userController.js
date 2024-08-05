@@ -445,7 +445,7 @@ export const resetPassword = asyncHandler (async (req, res) => {
   if (!userToken) {
     return res
       .status(400)
-      .json({ message: 'Abgelaufener Token. Bitte Registrierung neu starten!' });
+      .json({ message: 'Abgelaufener Link. Bitte Registrierung neu starten!' });
   }
 
   // user mit ID aus der Datenbank auswerten

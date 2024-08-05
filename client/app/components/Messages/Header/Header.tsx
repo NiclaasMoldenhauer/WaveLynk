@@ -1,6 +1,7 @@
 import { IUser } from "@/app/types/type";
 import { useChatContext } from "@/context/chatContext";
 import { useGlobalContext } from "@/context/globalContext";
+import { useUserContext } from "@/context/userContext";
 import { dots, searchIcon } from "@/utils/Icons";
 import { formatDateLastSeen } from "@/utils/dates";
 import Image from "next/image";

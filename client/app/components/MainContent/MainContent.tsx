@@ -22,17 +22,17 @@ function MainContent() {
             <span className={`font-bold ${gradientText}`}>WaveLynk</span>
           </h1>
           <p className="text-center text-gray-600 dark:text-gray-300">
-            Starte jetzt einen Chat mit deinen Freunden!
+            Starte jetzt einen Chat mit deinen Freunden,
             <span role="img" aria-label="smile">
               😊
             </span>
             <br />
-            <span>Knüpfe Kontakte und genieße den schnellen Chat.</span>
+            <span>Oder knüpfe neue Kontakte und Chatte sicher.</span>
           </p>
         </div>
       </div>
       <p className="mt-auto pb-4 text-center text-gray-600 dark:text-gray-300">
-        {lock} Sicherer und privater Instantmessenger.
+        {lock} Verschlüsselter und privater Instantmessenger.
       </p>
     </div>
   );
