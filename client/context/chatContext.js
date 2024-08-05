@@ -1,4 +1,4 @@
-import axios, { all } from "axios";
+import axios from "axios";
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import io from "socket.io-client";
@@ -32,10 +32,24 @@ export const ChatProvider = ({ children }) => {
 
     newSocket.on("connect", () => {
       console.log("Connected to the server");
+      if (userId) {
+        newSocket.emit('add user', userId);
+      }
     });
 
     newSocket.on("disconnect", (reason) => {
       console.log("disconnected from the server", reason);
+    });
+
+    newSocket.on('get users', async (users) => {
+      const onlineFriends = await Promise.all(
+        users.map(async (user) => {
+          const userData = await getUserById(user.userId);
+          return { ...userData, online: userData.online };
+        })
+      );
+
+      setOnlineUsers(onlineFriends.filter(friend => friend.friends.includes(userId)));
     });
 
     setSocket(newSocket);
@@ -44,7 +58,7 @@ export const ChatProvider = ({ children }) => {
     return () => {
       newSocket.disconnect();
     };
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     // Verhindern von Events wenn der Nutzer nicht eingeloggt ist

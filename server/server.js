@@ -9,31 +9,29 @@ import { Server } from "socket.io";
 import { createServer } from "node:http";
 import User from "./src/models/auth/userModel.js";
 
-dotenv.config ();
-
+dotenv.config();
 
 const port = process.env.PORT || 5000;
 
-const app = express ();
+const app = express();
 const httpServer = new createServer(app);
-const io = new Server (httpServer, {
+const io = new Server(httpServer, {
   cors: {
     origin: process.env.CLIENT_URL,
   },
-})
-
+});
 
 // middleware
-app.use (
-  cors ({
+app.use(
+  cors({
     origin: process.env.CLIENT_URL,
     credentials: true,
   })
 );
 
-app.use (express.json ());
-app.use (express.urlencoded ({extended: true}));
-app.use (cookieParser ());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // error handler middleware
 app.use(errorHandler);
@@ -48,49 +46,52 @@ const addUser = (userId, socketId) => {
   );
 };
 
-
-// get user 
 const getUser = (userId) => {
   return users.find((user) => user.userId === userId);
 };
 
-// enferne user ---> wenn er disconnected
 const removeUser = async (socketId) => {
   const user = users.find((user) => user.socketId === socketId);
 
   if (user) {
-    // update user lastSeen
+    // update user lastSeen and set online to false
     const updatedUser = await User.findByIdAndUpdate(
       user.userId,
-      { lastSeen: new Date() },
+      { lastSeen: new Date(), online: false },
       { new: true }
     );
 
     users = users.filter((user) => user.socketId !== socketId);
 
     // emit updated user to client
-    io.emit("User offline", updatedUser);
+    io.emit("user offline", updatedUser);
   }
 };
 
-io.on("Verbindung herstellen", (socket) => {
+io.on("connection", (socket) => {
   console.log("Ein User hat sich verbunden", socket.id);
 
-  socket.on("add user", (userId) => {
+  socket.on("add user", async (userId) => {
     addUser(userId, socket.id);
 
-    // emit all the users to the client
+    // Update user status to online
+    await User.findByIdAndUpdate(userId, { online: true });
 
+    // Emit all the users to the client
+    io.emit("get users", users);
+  });
+
+  socket.on("disconnect", async () => {
+    console.log("Ein Benutzer hat sich getrennt", socket.id);
+    await removeUser(socket.id);
     io.emit("get users", users);
   });
 
   // send and get message
   socket.on("send message", ({ senderId, receiverId, text }) => {
     console.log("senderId", senderId);
-    //find the receiver
     const user = getUser(receiverId);
 
-    // emit the message to the receiver
     if (user) {
       io.to(user.socketId).emit("get message", {
         senderId,
@@ -100,40 +101,32 @@ io.on("Verbindung herstellen", (socket) => {
       console.log("User not found");
     }
   });
-
-  // disconnect
-  socket.on("disconnect", async () => {
-    console.log("a user disconnected", socket.id);
-    await removeUser(socket.id);
-    io.emit("get users", users);
-  });
 });
 
 // routes
-const routeFiles = fs.readdirSync ('./src/routes');
+const routeFiles = fs.readdirSync('./src/routes');
 
-routeFiles.forEach (file => {
-  // use dynamic import
-  import (`./src/routes/${file}`)
-    .then (route => {
-      app.use ('/api/v1', route.default);
+routeFiles.forEach(file => {
+  import(`./src/routes/${file}`)
+    .then(route => {
+      app.use('/api/v1', route.default);
     })
-    .catch ((err) => {
-      console.log ('Failed to load route file', err);
+    .catch((err) => {
+      console.log('Failed to load route file', err);
     });
 });
 
 const server = async () => {
   try {
-    await connect ();
+    await connect();
 
-    httpServer.listen (port, () => {
-      console.log (`Server started on port ${port}`);
+    httpServer.listen(port, () => {
+      console.log(`Server started on port ${port}`);
     });
   } catch (error) {
-    console.log ('Failed to start server...', error.message);
-    process.exit (1);
+    console.log('Failed to start server...', error.message);
+    process.exit(1);
   }
 };
 
-server ();
+server();
