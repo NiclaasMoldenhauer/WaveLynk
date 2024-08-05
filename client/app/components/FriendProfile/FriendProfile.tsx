@@ -38,7 +38,9 @@ function FriendProfile() {
         >
           {activeChatData?.name}
         </h2>
-        <p className="self-center">{activeChatData?.email}</p>
+
+        {/* Participant Email ist auskommentiert, Kommentar entfernen für E-Mail anzeige */}
+        {/* <p className="self-center">{activeChatData?.email}</p> */}
 
         <p className="mt-6 py-4 w-full border-t-2 border-white self-start flex flex-col dark:border-[#3C3C3C]/60">
           <span

@@ -5,6 +5,7 @@ import React, { use, useEffect, useLayoutEffect, useRef, } from "react";
 import Sender from "../Sender/Sender";
 import Receiver from "../Receiver/Receiver";
 
+
 function Body() {
   const messageBodyRef = useRef(null) as any;
 
@@ -20,6 +21,7 @@ function Body() {
     }
   };
 
+  
   // Scroll nach unten nach initial load
   useLayoutEffect(() => {
     scrollToBottom("auto");

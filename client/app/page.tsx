@@ -17,7 +17,6 @@ export default function Home() {
   const { currentView, showFriendProfile, showProfile } = useGlobalContext();
   const { selectedChat } = useChatContext();
 
-  
   return (
     <div className="relative px-[5rem] py-7 h-full">
       <main

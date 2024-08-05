@@ -12,7 +12,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "WaveLynk",
-  description: "The peer-to-peer social network",
+  description: "The P2P Instant Messenger",
 };
 
 export default function RootLayout({
