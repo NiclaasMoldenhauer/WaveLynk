@@ -1,7 +1,6 @@
 import { IUser } from "@/app/types/type";
 import { useChatContext } from "@/context/chatContext";
 import { useGlobalContext } from "@/context/globalContext";
-import { useUserContext } from "@/context/userContext";
 import { dots, searchIcon } from "@/utils/Icons";
 import { formatDateLastSeen } from "@/utils/dates";
 import Image from "next/image";
@@ -14,20 +13,21 @@ function Header() {
 
   const { photo, lastSeen } = activeChatData || {};
 
+
   // Check ob User online ist
   const isOnline = onlineUsers?.find(
     (user: IUser) => user?._id === activeChatData?._id
   );
 
   useEffect(() => {
-    socket?.on("User disconnected", (updatedUser: IUser) => {
-      // Update online user state
+    socket?.on("user disconnected", (updatedUser: IUser) => {
+      // update online users state
       setOnlineUsers((prev: IUser[]) => {
         prev.filter((user: IUser) => user._id !== updatedUser._id);
       });
 
       // falls der Nutzer nicht online ist, wird er aus der Liste entfernt
-      if (activeChatData?._id !== updatedUser._id) {
+      if (activeChatData?._id === updatedUser._id) {
         activeChatData.lastSeen = updatedUser.lastSeen;
       }
     });

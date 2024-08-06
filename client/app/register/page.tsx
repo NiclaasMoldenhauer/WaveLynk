@@ -1,12 +1,12 @@
-import React from 'react';
-import RegisterForm from '../components/auth/RegisterForm/RegisterForm';
+import React from "react";
+import RegisterForm from "../components/auth/RegisterForm/RegisterForm";
 
-function page () {
-    return ( 
+function page() {
+  return (
     <div className="auth-page w-full h-full flex justify-center items-center">
-        <RegisterForm />
+      <RegisterForm />
     </div>
-    );
+  );
 }
 
 export default page;

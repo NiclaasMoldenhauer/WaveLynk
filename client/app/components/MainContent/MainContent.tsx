@@ -9,7 +9,7 @@ function MainContent() {
       <div className="mt-auto flex flex-col gap-4">
         <div className="flex justify-center items-center">
           <Image
-            className="drop-shadow-lg"
+            className="drop-shadow-2xl"
             src="/logo.png"
             alt="WaveLynk"
             width={120}
@@ -22,12 +22,12 @@ function MainContent() {
             <span className={`font-bold ${gradientText}`}>WaveLynk</span>
           </h1>
           <p className="text-center text-gray-600 dark:text-gray-300">
-            Starte jetzt einen Chat mit deinen Freunden,
+            Starte jetzt einen Chat mit deinen Freunden
             <span role="img" aria-label="smile">
               😊
             </span>
             <br />
-            <span>Oder knüpfe neue Kontakte und Chatte sicher.</span>
+            <span>Knüpfe neue Kontakte und Chatte sicher.</span>
           </p>
         </div>
       </div>

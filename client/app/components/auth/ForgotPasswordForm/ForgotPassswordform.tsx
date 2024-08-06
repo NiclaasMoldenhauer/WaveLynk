@@ -50,7 +50,6 @@ function ForgotPasswordForm() {
           </button>
         </div>
       </div>
-      <img src="/123691.png" alt="" />
     </form>
   );
 }

@@ -59,7 +59,7 @@ function ChatItem({ user, active, onClick, chatId }: ChatItemProps) {
           width={50}
           height={50}
           className="rounded-full aspect-square object-cover border-2 border-[white] dark:border-[#3C3C3C]/65 cursor-pointer
-            hover:scale-105 transition-transform duration-300 ease-in-out-full"
+            hover:scale-110 transition-transform duration-300 ease-in-out-full"
         />
 
         <div
