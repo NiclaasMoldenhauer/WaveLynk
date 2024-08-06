@@ -26,8 +26,8 @@ function Sender({ content, createdAt, status }: ISender) {
             </p>
           </div>
           <p
-            className="py-[0.25rem] max-w-[360px] w-full self-start px-4 rounded-tr-[30px] rounded-br-[30px] rounded-bl-[30px]
-          border-[#7263f3] text-white shadow-sm"
+            className="py-[0.25rem] max-w-[360px] w-full  self-start px-4 border-2 rounded-tr-[30px] rounded-br-[30px] rounded-bl-[30px] border-gray-200 bg-[#a3a3a358] dark:bg-[#8f43cd]  
+            dark:border-[#8f43cd] text-[#12181b] dark:text-white shadow-sm"
           >
             {content}
           </p>
