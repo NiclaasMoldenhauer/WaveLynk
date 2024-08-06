@@ -1,7 +1,7 @@
 export const searchIcon = <i className="fa-solid fa-magnifying-glass"></i>;
 export const chat = <i className="fa-solid fa-comment"></i>;
 export const moon = <i className="fa-solid fa-moon"></i>;
-export const sun = <i className="fa-solid fa-sun"></i>;
+export const sun = <i className="fa-regular fa-sun"></i>;
 export const dots = <i className="fa-solid fa-ellipsis"></i>;
 export const face = <i className="fa-solid fa-face-surprise"></i>;
 export const send = <i className="fa-solid fa-paper-plane"></i>;

@@ -11,12 +11,12 @@ function TextArea() {
   const user = useUserContext().user;
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  const emojieElemRef = useRef<HTMLDivElement>(null);
+  const emojiElemRef = useRef<HTMLDivElement>(null);
 
   const [message, setMessage] = useState("");
   const [toggleEmoji, setToggleEmoji] = useState(false);
 
-  useDetectOutsideClick(emojieElemRef, setToggleEmoji);
+  useDetectOutsideClick(emojiElemRef, setToggleEmoji);
 
   const handleOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value);
@@ -54,7 +54,7 @@ function TextArea() {
 
   return (
     <form
-      className="relative flex imtes-center"
+      className="relative flex items-center"
       onSubmit={(e) => {
         e.preventDefault();
         sendMessage({
@@ -96,7 +96,7 @@ function TextArea() {
         {send}
       </button>
       {toggleEmoji && (
-        <div ref={emojieElemRef} className="absolute right-0 bott-[72px] z-10">
+        <div ref={emojiElemRef} className="absolute right-0 bottom-[72px] z-10">
           <EmojiPicker
             onEmojiClick={(emojiObject) => {
               setMessage((prev: string) => prev + emojiObject.emoji);
