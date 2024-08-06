@@ -20,7 +20,7 @@ export default function Home() {
   return (
     <div className="relative px-[5rem] py-7 h-full">
       <main
-        className="h-full flex backdrop-blur-sm rounded-3xl bg-white/65 dark:bg-[#262626]/90 border-2 border-white 
+        className="h-full flex backdrop-blur-sm rounded-3xl bg-gray-150/65 dark:bg-[#262626]/90 border-2 border-white 
       dark:border-[#3C3C3C]/65 shadow-2xl overflow-hidden"
       >
         <Sidebar />
