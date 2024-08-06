@@ -53,7 +53,7 @@ function Sidebar() {
     handleViewChange,
     currentView,
   } = useGlobalContext();
-  const { photo, friendRequests } = user;
+  const { photo, friendRequests } = user; 
 
   // active nav Button
   const [activeNav, setActiveNav] = useState(navButtons[0].id);
