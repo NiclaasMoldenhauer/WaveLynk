@@ -1,0 +1,15 @@
+{
+  "name": "wavelynk",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "concurrently \"npm run serve-client\" \"npm run start-server\"",
+    "build-client": "npm run build --prefix client",
+    "serve-client": "serve -s client/.next",
+    "start-server": "npx nodemon server/server.js"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "serve": "^14.2.3",
+    "nodemon": "^3.1.4"
+  }
+}

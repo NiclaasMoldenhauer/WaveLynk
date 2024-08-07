@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connect from "./src/db/connect.js";
 import cookieParser from "cookie-parser";
+import path from "path";
 import fs from "node:fs";
 import errorHandler from "./src/helpers/errorhandler.js";
 import { Server } from "socket.io";
@@ -32,6 +33,11 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// Serve static files from the React app
+const __dirname = path.resolve(); // Sicherstellen, dass __dirname definiert ist
+app.use(express.static(path.join(__dirname, 'client/.next')));
+
 
 // error handler middleware
 app.use(errorHandler);
@@ -114,6 +120,11 @@ routeFiles.forEach(file => {
     .catch((err) => {
       console.log('Failed to load route file', err);
     });
+});
+
+// Fallback für alle anderen Routen zu React-App
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/.next', 'index.html'));
 });
 
 const server = async () => {
