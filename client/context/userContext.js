@@ -2,6 +2,8 @@ import axios from 'axios';
 import {useRouter} from 'next/navigation';
 import React, {useEffect, useState, useContext} from 'react';
 import toast from 'react-hot-toast';
+import dotenv from 'dotenv';
+dotenv.config ();
 
 const UserContext = React.createContext ();
 
@@ -9,7 +11,7 @@ const UserContext = React.createContext ();
 axios.defaults.withCredentials = true;
 
 export const UserContextProvider = ({children}) => {
-  const serverUrl = 'http://localhost:5000';
+  const serverUrl = process.env.SERVER_URL
 
   const router = useRouter ();
 

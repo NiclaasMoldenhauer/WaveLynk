@@ -3,10 +3,13 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import io from "socket.io-client";
 import { useUserContext } from "./userContext";
+import dotnev from "dotenv";
+
+dotnev.config();
 
 const ChatContext = React.createContext();
 
-const serverUrl = "http://localhost:5000";
+const serverUrl = process.env.SERVER_URL
 
 export const ChatProvider = ({ children }) => {
   const { user, setSearchResults, setUser } = useUserContext();
