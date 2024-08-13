@@ -3,9 +3,9 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import io from "socket.io-client";
 import { useUserContext } from "./userContext";
-import dotnev from "dotenv";
+import dotenv from "dotenv";
 
-dotnev.config();
+dotenv.config();
 
 const ChatContext = React.createContext();
 
