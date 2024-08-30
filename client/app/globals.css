@@ -2,20 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
 body {
-  height: 100vh;
-  font-size: 15px;
-  background: url("../public/glass-bg.png") no-repeat center center fixed;
+  font-size: 13px;
+  background-image: url("../public/glass-bg.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  background-attachment: fixed;
 }
 
 .dark body {
   color: #e9e9e9;
-  background: url("../public/bg--blur-purple.png") no-repeat center center fixed;
+  background-image: url("../public/bg--blur-purple.png");
 }
 
 .auth-page {
   height: 100vh;
-  background: url("../public/glass-bg.png") no-repeat center center fixed;
+  background-image: url("../public/glass-bg.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  background-attachment: fixed;
 }
 
 .auth-form {
@@ -70,18 +84,18 @@ body {
 
 .textarea::-webkit-scrollbar-thumb {
   background-color: #7263f3;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 .message-body {
-  height: calc(100% - 152px);
+  height: calc(100% - 150px);
   overflow-y: auto;
   resize: none;
   transition: all 0.3s ease-in-out;
 }
 
 .message-body::-webkit-scrollbar {
-  width: 5px;
+  width: 8px;
 }
 
 .message-body::-webkit-scrollbar-thumb {
