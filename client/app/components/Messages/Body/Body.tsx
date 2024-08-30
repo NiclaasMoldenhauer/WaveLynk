@@ -14,10 +14,9 @@ interface IMessage {
 }
 
 function Body() {
-  const { messages } = useChatContext();
+  const { messages, setMessages, selectedChat, socket } = useChatContext();
   const { user } = useUserContext();
   const userId = user?._id;
-
   // Explicitly type the ref
   const messageBodyRef = useRef<HTMLDivElement | null>(null);
 
@@ -39,6 +38,26 @@ function Body() {
   useEffect(() => {
     scrollToBottom("auto");
   }, [messages]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("message", (newMessage: IMessage) => {
+        if (newMessage.sender !== userId) {
+          setMessages((prevMessages: any) => [...prevMessages, newMessage]);
+        }
+      });
+
+      return () => {
+        socket.off("message");
+      };
+    }
+  }, [socket, userId, setMessages]);
+
+  useEffect(() => {
+    if (socket && selectedChat) {
+      socket.emit("join chat", selectedChat._id);
+    }
+  }, [socket, selectedChat]);
 
   return (
     <div

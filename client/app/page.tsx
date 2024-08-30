@@ -18,7 +18,7 @@ export default function Home() {
   const { selectedChat } = useChatContext();
 
   return (
-    <div className="relative px-[5rem] py-7 h-full">
+    <div className="relative px-[4rem] py-7 h-full">
       <main
         className="h-full flex backdrop-blur-sm rounded-3xl bg-gray-150/65 dark:bg-[#262626]/90 border-2 border-white 
       dark:border-[#3C3C3C]/65 shadow-2xl overflow-hidden"
@@ -33,7 +33,7 @@ export default function Home() {
               <>
                 <Header />
                 <Body />
-                <div className="absolute w-full px-4 pb-4 left-0 bottom-0">
+                <div className="absolute w-full px-7 pb-5 left-0 bottom-0">
                   <TextArea />
                 </div>
               </>
