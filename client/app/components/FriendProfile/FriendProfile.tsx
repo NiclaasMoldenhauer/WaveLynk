@@ -31,7 +31,10 @@ function FriendProfile() {
           height={200}
           className="mt-8 self-center rounded-full aspect-square object-cover border-2 border-[white] dark:border-[#3C3C3C]/65 cursor-pointer
             hover:scale-105 transition-transform duration-300 ease-in-out"
-        />
+          style={{
+            maxWidth: "100%",
+            height: "auto"
+          }} />
 
         <h2
           className={`mt-2 px-4 font-bold self-center text-2xl ${gradientText} dark:text-slate-100`}

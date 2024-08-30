@@ -2,8 +2,6 @@ import axios from 'axios';
 import {useRouter} from 'next/navigation';
 import React, {useEffect, useState, useContext} from 'react';
 import toast from 'react-hot-toast';
-import dotenv from 'dotenv';
-dotenv.config ();
 
 const UserContext = React.createContext ();
 
@@ -11,7 +9,7 @@ const UserContext = React.createContext ();
 axios.defaults.withCredentials = true;
 
 export const UserContextProvider = ({children}) => {
-  const serverUrl = process.env.SERVER_URL
+  const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 
   const router = useRouter ();
 
@@ -71,11 +69,22 @@ export const UserContextProvider = ({children}) => {
           password: userState.password,
         },
         {
-          withCredentials: true, // cookies sind aktiviert
+          withCredentials: true,
         }
       );
 
-      toast.success ('Login erfolgreich'); // Push Nachricht nach Login
+      const setCookieHeader = res.headers['set-cookie'];
+      const token =
+        setCookieHeader && setCookieHeader.split ('=')[1].split (';')[0];
+      localStorage.setItem ('authToken', response.data.token);
+      localStorage.setItem ('jwtToken', token); // JWT in LocalStorage speichern
+
+      const authToken = localStorage.getItem ('authToken');
+      if (authToken) {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${authToken}`;
+      }
+
+      toast.success ('Login erfolgreich');
 
       // clear the form
       setUserState ({
@@ -90,16 +99,27 @@ export const UserContextProvider = ({children}) => {
       router.push ('/');
     } catch (error) {
       console.log ('Fehler beim Login', error);
-      toast.error (error.response.data.message);
+      toast.error (error.response.data.message || 'Login fehlgeschlagen');
     }
   };
 
   // get logged in status
   const userLoginStatus = async () => {
     let loggedIn = false;
+    const token = localStorage.getItem ('jwtToken'); // JWT aus dem LocalStorage holen
+
+    if (!token) {
+      console.log ('Kein Token gefunden, Benutzer ist nicht authentifiziert');
+      router.push ('/login');
+      return loggedIn;
+    }
+
     try {
       const res = await axios.get (`${serverUrl}/api/v1/login-status`, {
         withCredentials: true, // ccokies zum server senden
+        headers: {
+          Authorization: `Bearer ${token}`, // JWT mitgeben
+        },
       });
 
       // cors string zu boolean umwandeln
@@ -111,6 +131,8 @@ export const UserContextProvider = ({children}) => {
       }
     } catch (error) {
       console.log ('Fehler bei Statusabfrage', error);
+      setLoading (false);
+      toast.error (error.response.data.message || 'Fehler bei Statusabfrage');
     }
 
     return loggedIn;
@@ -122,6 +144,8 @@ export const UserContextProvider = ({children}) => {
       const res = await axios.get (`${serverUrl}/api/v1/logout`, {
         withCredentials: true, // send cookies to the server
       });
+
+      localStorage.removeItem ('jwtToken'); // JWT aus dem LocalStorage loeschen
 
       toast.success ('Erfolgreich ausgeloggt!');
 
@@ -135,15 +159,21 @@ export const UserContextProvider = ({children}) => {
 
   // get user details
   const getUser = async () => {
+    const token = localStorage.getItem ('jwtToken'); // Token aus localStorage abrufen
+
     try {
       const res = await axios.get (`${serverUrl}/api/v1/user`, {
         withCredentials: true, // send cookies zum server
+        headers: {
+          Authorization: `Bearer ${token}`, // JWT-Token im Header mitsenden
+        },
       });
 
       setUser (prevState => {
         return {
           ...prevState,
           ...res.data,
+          photo: res.data.photo,
         };
       });
 
@@ -156,20 +186,25 @@ export const UserContextProvider = ({children}) => {
   };
 
   // update user details
-  const updateUser = async (data) => {
+  const updateUser = async data => {
     setLoading (true);
 
     console.log ('Daten zu Updaten: ', data);
 
     try {
+      const token = localStorage.getItem ('jwtToken');
+
       const res = await axios.patch (`${serverUrl}/api/v1/user`, data, {
         withCredentials: true, // send cookies zum server
+        headers: {
+          Authorization: `Bearer ${token}`, // JWT-Token im Header mitsenden
+        },
       });
 
       console.log ('Daten erfolgreich aktualisiert: ', res);
 
       // update user state
-      setUser ((prevState) => {
+      setUser (prevState => {
         return {
           ...prevState,
           ...res.data,
@@ -367,66 +402,64 @@ export const UserContextProvider = ({children}) => {
   };
 
   // user suchen
-   const searchUsers = async (query) => {
-    setLoading(true);
+  const searchUsers = async query => {
+    setLoading (true);
     try {
-      const res = await axios.get(
+      const res = await axios.get (
         `${serverUrl}/api/v1/search-users?q=${query}`,
         {},
         {
           withCredentials: true,
         }
       );
-  
-      setSearchResults(res.data);
-      setLoading(false);
+
+      setSearchResults (res.data);
+      setLoading (false);
     } catch (error) {
-      console.log("Fehler beim Suchen des Nutzers", error);
-      toast.error(error.response.data.message);
-      setLoading(false);
+      console.log ('Fehler beim Suchen des Nutzers', error);
+      toast.error (error.response.data.message);
+      setLoading (false);
     }
   };
 
-
   // freundesanfrage abschicken
-  const sendFriendRequest = async (id) => {
-    setLoading(true);
+  const sendFriendRequest = async id => {
+    setLoading (true);
     try {
-      const res = await axios.post(`${serverUrl}/api/v1/friend-request`, id, {
+      const res = await axios.post (`${serverUrl}/api/v1/friend-request`, id, {
         withCredentials: true,
       });
 
-      toast.success("Freundschaftsanfrage gesendet");
+      toast.success ('Freundschaftsanfrage gesendet');
 
-      setLoading(false);
+      setLoading (false);
       return res.data;
     } catch (error) {
-      console.log("Fehler beim Absenden der Freundschaftsanfrage", error);
-      toast.error(error.response.data.message);
-      setLoading(false);
+      console.log ('Fehler beim Absenden der Freundschaftsanfrage', error);
+      toast.error (error.response.data.message);
+      setLoading (false);
     }
   };
 
   // Freundesanfrage annehmen
-  const acceptFriendRequest = async (id) => {
-    setLoading(true);
+  const acceptFriendRequest = async id => {
+    setLoading (true);
     try {
-      const res = await axios.post(`${serverUrl}/api/v1/friends/accept`, id, {
+      const res = await axios.post (`${serverUrl}/api/v1/friends/accept`, id, {
         withCredentials: true,
       });
 
-      toast.success("Freundschaftsanfrage angenommen");
+      toast.success ('Freundschaftsanfrage angenommen');
       // refresh der User Details
-      getUser();
+      getUser ();
 
-      setLoading(false);
+      setLoading (false);
     } catch (error) {
-      console.log("Fehler beim Annehmen der Freundschaftsanfrage", error);
-      toast.error(error.response.data.message);
-      setLoading(false);
+      console.log ('Fehler beim Annehmen der Freundschaftsanfrage', error);
+      toast.error (error.response.data.message);
+      setLoading (false);
     }
   };
-
 
   useEffect (() => {
     const loginStatusGetUser = async () => {
@@ -440,8 +473,6 @@ export const UserContextProvider = ({children}) => {
     loginStatusGetUser ();
   }, []);
 
-
-  
   // useEffect (
   //   () => {
   //     if (user.role === 'admin') {
@@ -450,8 +481,6 @@ export const UserContextProvider = ({children}) => {
   //   },
   //   [user.role]
   // );
-
-  console.log ('User State', user);
 
   return (
     <UserContext.Provider

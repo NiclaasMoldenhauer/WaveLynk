@@ -1,18 +1,27 @@
+import React, { useEffect, useLayoutEffect, useRef } from "react";
 import { useChatContext } from "@/context/chatContext";
 import { useUserContext } from "@/context/userContext";
-import { IMessage } from "@/app/types/type";
-import React, { use, useEffect, useLayoutEffect, useRef, } from "react";
 import Sender from "../Sender/Sender";
 import Receiver from "../Receiver/Receiver";
 
+// Define an interface for your message type
+interface IMessage {
+  _id: string;
+  sender: string;
+  content: string;
+  status: string;
+  createdAt: string;
+}
 
 function Body() {
-  const messageBodyRef = useRef(null) as any;
+  const { messages } = useChatContext();
+  const { user } = useUserContext();
+  const userId = user?._id;
 
-  const { messages, arrivedMessages } = useChatContext();
-  const userId = useUserContext().user?._id;
+  // Explicitly type the ref
+  const messageBodyRef = useRef<HTMLDivElement | null>(null);
 
-  const scrollToBottom = (behavior: string = "smooth") => {
+  const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
     if (messageBodyRef.current) {
       messageBodyRef.current.scrollTo({
         top: messageBodyRef.current.scrollHeight,
@@ -21,17 +30,10 @@ function Body() {
     }
   };
 
-  
   // Scroll nach unten nach initial load
   useLayoutEffect(() => {
     scrollToBottom("auto");
   }, []);
-
-  useEffect(() => {
-    if (arrivedMessages && arrivedMessages.sender !== userId) {
-      scrollToBottom("smooth");
-    }
-  }, [arrivedMessages]);
 
   // Scroll nach unten wenn eine neue Nachricht gesendet wurde
   useEffect(() => {
@@ -43,10 +45,10 @@ function Body() {
       ref={messageBodyRef}
       className="message-body relative flex-1 p-4 overflow-y-auto"
     >
-      <div className="relativ flex flex-col">
+      <div className="relative flex flex-col">
         {messages.map((message: IMessage) =>
           message.sender === userId ? (
-            <div key={message?._id} className="self-end mb-2">
+            <div key={message._id} className="self-end mb-2">
               <Sender
                 status={message.status}
                 content={message.content}
@@ -54,9 +56,9 @@ function Body() {
               />
             </div>
           ) : (
-            <div key={message?._id}>
+            <div key={message._id}>
               <Receiver
-                messageId={message?._id}
+                messageId={message._id}
                 content={message.content}
                 createdAt={message.createdAt}
               />

@@ -12,7 +12,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "WaveLynk",
-  description: "The P2P Instant Messenger",
+  description: "Your P2P Instant Messenger",
 };
 
 export default function RootLayout({
@@ -26,7 +26,6 @@ export default function RootLayout({
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-          integrity="sha512-SnQOomUxfnRqLheS5ynwYXbgLncTl5ELavjWQ+0BDrqLXuI4ZGqT+q5hPqoBmEud1w5W5yJQZ+5UHvGd6g=="
           crossOrigin="anonymous"
           referrerPolicy="no-referrer"
         />

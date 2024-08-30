@@ -17,21 +17,24 @@ const app = express();
 const httpServer = new createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.CLIENT_URL,
+    origin: process.env.NEXT_PUBLIC_CLIENT_URL,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    credentials: true,
   },
 });
 
+
 // middleware
+app.use(cookieParser()); 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: process.env.NEXT_PUBLIC_CLIENT_URL,
     credentials: true,
   })
 );
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 
 // error handler middleware
 app.use(errorHandler);

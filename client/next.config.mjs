@@ -11,6 +11,7 @@ const nextConfig = {
       'vecteezy.com',
       'i.scdn.co',
       't4.ftcdn.net',
+      'dashboard.edgestore.dev',
     ],
   },
 };

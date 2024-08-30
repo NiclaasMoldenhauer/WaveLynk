@@ -1,15 +1,13 @@
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import io from "socket.io-client";
 import { useUserContext } from "./userContext";
-import dotenv from "dotenv";
-
-dotenv.config();
+import toast from 'react-hot-toast';
 
 const ChatContext = React.createContext();
 
-const serverUrl = process.env.SERVER_URL
+const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 
 export const ChatProvider = ({ children }) => {
   const { user, setSearchResults, setUser } = useUserContext();
@@ -126,12 +124,19 @@ export const ChatProvider = ({ children }) => {
 
   const getUserById = async (id) => {
     try {
-      if (!id) return;
 
-      const res = await axios.get(`${serverUrl}/api/v1/user/${id}`);
+      const res = await axios.get(`${serverUrl}/api/v1/user/${id}`, {
+        withCredentials: true, // Falls Cookies für die Authentifizierung verwendet werden
+      });
       return res.data;
     } catch (error) {
-      console.log("Fehler beim Abrufen des getUserById", error.message);
+      console.error("Fehler beim Abrufen des getUserById", error.message);
+      if (error.response && error.response.status === 404) {
+        toast.error("Benutzer nicht gefunden");
+      } else {
+        toast.error("Fehler beim Laden der Benutzerdaten");
+      }
+      return null;
     }
   };
 

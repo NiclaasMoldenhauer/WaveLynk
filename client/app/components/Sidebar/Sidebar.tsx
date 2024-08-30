@@ -20,6 +20,7 @@ import { IChat, IUser } from "@/app/types/type";
 import { useChatContext } from "@/context/chatContext";
 import ChatItem from "../ChatItem/ChatItem";
 import FriendRequests from "../FriendRequests/FriendRequests";
+import ProfileImage from "../ProfileImage/ProfileImage";
 
 const navButtons = [
   {
@@ -45,15 +46,18 @@ const navButtons = [
 
 function Sidebar() {
   const { user, updateUser, searchResults } = useUserContext();
-  const { allChatsData, handleSelectedChat, selectedChat } = useChatContext();
+  const { allChatsData, handleSelectedChat, selectedChat, isLoading } =
+    useChatContext();
   const {
+    currentView,
+    handleViewChange,
     showProfile,
     handleProfileToggle,
+    showFriendProfile,
     handleFriendProfile,
-    handleViewChange,
-    currentView,
   } = useGlobalContext();
-  const { photo, friendRequests } = user; 
+
+  const { photo, friendRequests } = user || {};
 
   // active nav Button
   const [activeNav, setActiveNav] = useState(navButtons[0].id);
@@ -68,8 +72,8 @@ function Sidebar() {
   };
 
   useEffect(() => {
-    document.documentElement.className = user.theme;
-  }, [user.theme]);
+    document.documentElement.className = user?.theme;
+  }, [user?.theme]);
 
   return (
     <div className="w-[22rem] flex border-r-2 border-white dark:border-[#3C3C3C]/60">
@@ -80,13 +84,10 @@ function Sidebar() {
             handleProfileToggle(true);
           }}
         >
-          <Image
-            src={photo}
-            alt="profile"
-            width={50}
-            height={50}
-            className="aspect-square rounded-full object-cover border-2 border-white dark:border-[#3C3C3C]/65
-              cursor-pointer hover:scale-110 transition-transform duration-300 ease-in-out shadow-sm select-text"
+          <ProfileImage
+            photo={user?.photo}
+            alt={user?.name || "Profilbild"}
+            size={50}
           />
         </div>
         <div className="w-full relative py-4 flex flex-col items-center gap-8 text-[#454e56] text-lg border-2 border-white dark:border-[#3C3C3C]/65 rounded-[30px] shadow-sm">
@@ -114,6 +115,8 @@ function Sidebar() {
             );
           })}
         </div>
+
+        {/* Theme toggle */}
         <div className="px-2 py-1 text-[#454e56] text-xl flex flex-col gap-2 border-2 border-white dark:border-[#3C3C3C]/65 rounded-[30px] shadow-sm dark:text-white/65">
           <button
             className={`${
@@ -134,6 +137,8 @@ function Sidebar() {
           </button>
         </div>
       </div>
+
+      {/* Main content area */}
       <div className="pb-4 flex-1">
         <h2
           className={`px-4 mt-6 font-bold text-2xl ${gradientText} dark:text-white`}
@@ -163,30 +168,38 @@ function Sidebar() {
               {chat}
               <span>Alle Chats</span>
             </h4>
-
             <div className="mt-2">
-              {allChatsData.map((chat: IChat) => {
-                return (
+              {isLoading ? (
+                <p className="px-4 py-2 text-[#454e56] dark:text-white/65">
+                  Lädt Chats...
+                </p>
+              ) : allChatsData && allChatsData.length > 0 ? (
+                allChatsData.map((chat: IChat) => (
                   <React.Fragment key={chat._id}>
-                    {chat?.participantsData?.map((participant: IUser) => {
-                      return (
-                        <ChatItem
-                          key={participant._id}
-                          user={participant}
-                          active={
-                            !showProfile && selectedChat?._id === chat?._id
-                          }
-                          chatId={chat._id}
-                          onClick={() => {
-                            handleProfileToggle(false);
-                            handleSelectedChat(chat);
-                          }}
-                        />
-                      );
-                    })}
+                    {chat.participantsData &&
+                      chat.participantsData.map((participant: IUser) =>
+                        participant && participant._id ? (
+                          <ChatItem
+                            key={participant._id}
+                            user={participant}
+                            active={
+                              !showProfile && selectedChat?._id === chat._id
+                            }
+                            chatId={chat._id}
+                            onClick={() => {
+                              handleProfileToggle(false);
+                              handleSelectedChat(chat);
+                            }}
+                          />
+                        ) : null
+                      )}
                   </React.Fragment>
-                );
-              })}
+                ))
+              ) : (
+                <p className="px-4 py-2 text-[#454e56] dark:text-white/65">
+                  Keine Chats gefunden
+                </p>
+              )}
             </div>
           </div>
         )}
@@ -200,7 +213,7 @@ function Sidebar() {
             </h4>
             <div className="mt-2">
               <p className="px-4 py-2 text-[#454e56] dark:text-white/65">
-              Keine archivierten Chats
+                Keine archivierten Chats
               </p>
             </div>
           </div>

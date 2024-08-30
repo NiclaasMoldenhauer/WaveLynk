@@ -37,7 +37,7 @@ function RegisterForm() {
             value={name}
             onChange={(e) => handlerUserInput("name")(e)}
             name="name"
-            placeholder="Gernhart Reinholzen"
+            placeholder="Max Mustermann"
             className="px-4 py-3 border-[2px] rounded-md outline-[#94a2e2] text-gray-950"
           />
         </div>
@@ -51,7 +51,7 @@ function RegisterForm() {
             value={email}
             onChange={(e) => handlerUserInput("email")(e)}
             name="email"
-            placeholder="Svenjamin@shemail.com"
+            placeholder="MaxMustermann@gmail.com"
             className="px-4 py-3 border-[2px] rounded-md outline-[#94a2e2] text-gray-950"
           />
         </div>

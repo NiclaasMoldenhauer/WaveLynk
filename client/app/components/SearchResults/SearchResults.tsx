@@ -44,7 +44,10 @@ function SearchResults() {
                   width={40}
                   height={40}
                   className="rounded-full aspect-square object-cover"
-                />
+                  style={{
+                    maxWidth: "100%",
+                    height: "auto"
+                  }} />
 
                 <div>
                   <h3 className="font-medium">{user?.name}</h3>

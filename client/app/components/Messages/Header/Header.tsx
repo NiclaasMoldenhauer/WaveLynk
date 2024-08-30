@@ -5,14 +5,17 @@ import { dots, searchIcon } from "@/utils/Icons";
 import { formatDateLastSeen } from "@/utils/dates";
 import Image from "next/image";
 import React, { useEffect } from "react";
+import ProfileImage from "../../ProfileImage/ProfileImage";
+import { useUserContext } from "@/context/userContext";
 
 function Header() {
   const { activeChatData, onlineUsers, socket, setOnlineUsers } =
     useChatContext();
   const { handleFriendProfile, showFriendProfile } = useGlobalContext();
 
-  const { photo, lastSeen } = activeChatData || {};
+  const { user, updateUser, searchResults } = useUserContext();
 
+  const { photo, lastSeen } = activeChatData || {};
 
   // Check ob User online ist
   const isOnline = onlineUsers?.find(
@@ -44,15 +47,11 @@ function Header() {
         className="flex items-center gap-2 cursor-pointer"
         onClick={() => handleFriendProfile(!showFriendProfile)}
       >
-        <Image
-          src={photo}
-          alt="Profilbild"
-          width={50}
-          height={50}
-          className="rounded-full aspect-square object-cover border-2 border-[white] dark:border-[#3C3C3C]/65 cursor-pointer
-                hover:scale-110 transition-transform duration-300 ease-in-out"
+        <ProfileImage
+          photo={activeChatData?.photo}
+          alt={activeChatData?.name || "Profilbild"}
+          size={50}
         />
-
         <div className="flex flex-col">
           <h2 className="font-bold text-xl text-[#454e56] dark:text-white">
             {activeChatData?.name}
@@ -64,8 +63,8 @@ function Header() {
       </div>
       <div></div>
       <div className="flex items-center gap-6 text-[#454e56] text-xl">
-    <button className="p-1">{searchIcon}</button>
-    <button className="p-1">{dots}</button>
+        <button className="p-1">{searchIcon}</button>
+        <button className="p-1">{dots}</button>
       </div>
     </div>
   );

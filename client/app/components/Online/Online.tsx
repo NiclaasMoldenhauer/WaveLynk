@@ -50,7 +50,10 @@ function Online() {
                   height={50}
                   className="rounded-full aspect-square object-cover border-2 border-[white] dark:border-[#3C3C3C]/65 cursor-pointer hover:scale-105 transition-transform duration-300 ease-in-out"
                   alt="profile"
-                />
+                  style={{
+                    maxWidth: "100%",
+                    height: "auto"
+                  }} />
                 <div className="absolute  bottom-0 right-0 w-[13px] h-[13px] bg-green-500 rounded-full border-2 border-white"></div>
               </div>
               <div className="flex-1 flex flex-col">

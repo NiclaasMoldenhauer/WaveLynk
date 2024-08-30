@@ -3,6 +3,7 @@ import { useUserContext } from "@/context/userContext";
 import { formatDateBasedOnTime } from "@/utils/dates";
 import Image from "next/image";
 import React from "react";
+import ProfileImage from "../../ProfileImage/ProfileImage";
 
 interface ISender {
   content: string;
@@ -12,7 +13,6 @@ interface ISender {
 
 function Sender({ content, createdAt, status }: ISender) {
   const { user } = useUserContext();
-
   const { photo } = user || {};
 
   return (
@@ -32,12 +32,10 @@ function Sender({ content, createdAt, status }: ISender) {
             {content}
           </p>
         </div>
-        <Image
-          src={photo}
+        <ProfileImage
+          photo={photo}
           alt="Profilbild"
-          width={50}
-          height={50}
-          className="rounded-full aspect-square object-cover self-start border-2 border-[white] cursor-pointer hover:scale-110 transition-transform duration-300 ease-in-out shadow-sm"
+          size={50}
         />
       </div>
     </div>

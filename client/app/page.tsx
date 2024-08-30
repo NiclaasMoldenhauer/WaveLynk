@@ -29,11 +29,15 @@ export default function Home() {
             {/* Default Content */}
             {!showProfile && !selectedChat && <MainContent />}
 
-            {!showProfile && selectedChat && <Header />}
-            {!showProfile && showFriendProfile && <Body />}
-            <div className="absolute w-full px-4 pb-4 left-0 bottom-0">
-              {!showProfile && selectedChat && <TextArea />}
-            </div>
+            {!showProfile && selectedChat && (
+              <>
+                <Header />
+                <Body />
+                <div className="absolute w-full px-4 pb-4 left-0 bottom-0">
+                  <TextArea />
+                </div>
+              </>
+            )}
 
             {showProfile && (
               <div className="flex flex-col items-center justify-center h-full">

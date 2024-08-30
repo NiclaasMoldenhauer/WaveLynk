@@ -9,11 +9,16 @@ function MainContent() {
       <div className="mt-auto flex flex-col gap-4">
         <div className="flex justify-center items-center">
           <Image
+            priority={false}
             className="drop-shadow-2xl"
             src="/logo.png"
             alt="WaveLynk"
             width={120}
             height={120}
+            style={{
+              maxWidth: "100%",
+              height: "auto",
+            }}
           />
         </div>
         <div className="flex flex-col gap-4">

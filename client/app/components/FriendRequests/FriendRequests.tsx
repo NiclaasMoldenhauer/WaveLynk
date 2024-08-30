@@ -57,7 +57,10 @@ function FriendRequests() {
                     width={50}
                     height={50}
                     className="rounded-full aspect-square object-cover"
-                  />
+                    style={{
+                      maxWidth: "100%",
+                      height: "auto"
+                    }} />
 
                   <div>
                     <h3 className="font-medium ">{request.name}</h3>

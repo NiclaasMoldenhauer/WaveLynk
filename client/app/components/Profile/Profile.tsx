@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react";
 function Profile() {
   const { edgestore } = useEdgeStore();
 
-  const { updateUser, changePassword, logoutUser } = useUserContext();
+  const { updateUser, changePassword, logoutUser, emailVerification  } = useUserContext();
 
   const photo = useUserContext().user?.photo;
   const bio = useUserContext().user?.bio;
@@ -57,6 +57,8 @@ function Profile() {
   useEffect(() => {
     handleUploadImage();
   }, [file]);
+
+
   return (
     <div className="px-5 pb-5 w-[80%]">
       <h3
@@ -74,7 +76,10 @@ function Profile() {
             height={300}
             className="aspect-square rounded-full object-cover border-2 border-[white] cursor-pointer hover:scale-105 transition-transform
                 duration-300 ease-in-out shadow-sm select-text  dark:border-[#3C3C3C]/65"
-          />
+            style={{
+              maxWidth: "100%",
+              height: "auto"
+            }} />
 
           <input
             type="file"
@@ -101,7 +106,7 @@ function Profile() {
           <div className="mb-2">
             <label
               htmlFor="name"
-              className={`text-lg font-semibold ${gradientText} dark:text-slate-200`}
+              className={`text-xl font-semibold ${gradientText} dark:text-slate-200`}
             >
               Name
             </label>
@@ -118,9 +123,9 @@ function Profile() {
           <div>
             <label
               htmlFor="bio"
-              className={`text-lg font-semibold ${gradientText} dark:text-slate-200`}
+              className={`text-xl font-semibold ${gradientText} dark:text-slate-200`}
             >
-              Status
+              Bio
             </label>
             <textarea
               name="bio"
@@ -136,7 +141,7 @@ function Profile() {
           <div className="py-4 flex-auto justify-end">
             <button
               type="submit"
-              className="bg-[#2575d6] text-white w-full p-1 rounded-md hover:bg-[#2225c8] transition-colors duration-300 ease-in-out"
+              className="bg-[#2575d6] text-white w-full p-2 rounded-md hover:bg-[#2225c8] transition-colors duration-300 ease-in-out"
             >
               Profil aktualisieren
             </button>
@@ -189,19 +194,25 @@ function Profile() {
             </div>
           </div>
           <div className="py-4 flex-auto justify-end">
-            <button className="bg-[#2575d6] text-white w-full p-1 rounded-md hover:bg-[#2225c8] transition-colors duration-300 ease-in-out">
+            <button className="bg-[#2575d6] text-white w-full p-2 rounded-md hover:bg-[#2225c8] transition-colors duration-300 ease-in-out">
               Password ändern
             </button>
           </div>
         </form>
 
-        <div className="pt-4 self-center flex justify-center">
-          <button
-            onClick={() => logoutUser()}
-            className="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-900 transition-colors duration-300 ease-in-out"
-          >
-            {logout} Logout
-          </button>
+        <div className="pt-4 flex justify-between">
+        <button
+          onClick={() => logoutUser()}
+          className="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-900 transition-colors duration-300 ease-in-out"
+        >
+          {logout} Logout
+        </button>
+        <button
+          onClick={() => emailVerification()}
+          className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-[#2225c8] transition-colors duration-300 ease-in-out"
+        >
+          E-Mail verifizieren
+        </button>
         </div>
       </div>
     </div>

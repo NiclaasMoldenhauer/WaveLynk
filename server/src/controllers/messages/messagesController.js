@@ -71,17 +71,17 @@ export const getChatMessages = expressAsyncHandler (async (req, res) => {
 });
 
 // get user by id handler
-export const getUserById = expressAsyncHandler (async (req, res) => {
+export const getUserById = expressAsyncHandler(async (req, res) => {
   try {
-    const user = await User.findById (req.params.id).select ('-password');
+    const user = await User.findById(req.params.id).select('-password');
 
     if (!user) {
-      res.status (404).json ({message: 'User nicht gefunden'});
+      return res.status(404).json({ message: 'User nicht gefunden' });
     }
 
-    res.status (200).json (user);
+    return res.status(200).json(user);
   } catch (error) {
-    console.log ('Fehler beim Abrufen des Users...', error.message);
-    res.status (500).json ({message: error.message});
+    console.log('Fehler beim Abrufen des Users...', error.message);
+    return res.status(500).json({ message: error.message });
   }
 });

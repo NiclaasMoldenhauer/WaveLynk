@@ -2,70 +2,67 @@ import asyncHandler from 'express-async-handler';
 import jwt from 'jsonwebtoken';
 import User from '../models/auth/userModel.js';
 
-export const protect = asyncHandler (async (req, res, next) => {
+export const protect = asyncHandler(async (req, res, next) => {
   try {
-    // check if user is logged in
+    // Check if token exists in cookies
     const token = req.cookies.token;
 
     if (!token) {
       // 401 Unauthorized
-      return res.status (401).json ({message: 'Du musst angemeldet sein'});
+      return res.status(401).json({ message: 'Du musst angemeldet sein' });
     }
 
-    // verify token
-    const decoded = jwt.verify (token, process.env.JWT_SECRET);
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // get user from the token ---> OHNE PASSWORT!
-    const user = await User.findById (decoded.id).select ('-password');
+    // Get user from the token, excluding password
+    const user = await User.findById(decoded.id).select('-password');
 
-    // check if user exists
+    // Check if user exists
     if (!user) {
-      res.status (404).json ({message: 'Nutzer nicht gefunden'});
+      return res.status(404).json({ message: 'Nutzer nicht gefunden' });
     }
 
-    // set user details in req object
+    // Set user details in req object
     req.user = user;
 
-    next ();
+    next();
   } catch (error) {
     // 401 Unauthorized
-    res.status (401).json ({message: 'Du musst angemeldet sein'});
+    console.error('Token verification failed:', error.message);
+    res.status(401).json({ message: 'Du musst angemeldet sein' });
   }
 });
 
-// admin middleware
-export const adminMiddleware = asyncHandler (async (req, res, next) => {
+// Admin middleware
+export const adminMiddleware = asyncHandler(async (req, res, next) => {
   if (req.user && req.user.role === 'admin') {
-    // if user is admin continue
-    next ();
-    return;
+    // If user is admin, continue
+    next();
+  } else {
+    // If not admin, send 403 Forbidden
+    res.status(403).json({ message: 'Nicht berechtigt' });
   }
-  // if not admin send 403 forbidden
-  res.status (403).json ({message: 'Nicht berechtigt'});
 });
 
-export const creatorMiddleware = asyncHandler (async (req, res, next) => {
-  if (    
-    
-    (req.user && req.user.role === 'creator') ||
-    (req.user && req.user.role === 'admin' )
-
-  ) {
-    // if user is admin continue
-    next ();
-    return;
+// Creator middleware
+export const creatorMiddleware = asyncHandler(async (req, res, next) => {
+  if (req.user && (req.user.role === 'creator' || req.user.role === 'admin')) {
+    // If user is creator or admin, continue
+    next();
+  } else {
+    // If not creator or admin, send 403 Forbidden
+    res.status(403).json({ message: 'Nicht berechtigt' });
   }
-  // if not admin send 403 forbidden
-  res.status (403).json ({message: 'Nicht berechtigt'});
 });
 
-// verified middleware
-export const verifiedMiddleware = asyncHandler (async (req, res, next) => {
+// Verified middleware
+export const verifiedMiddleware = asyncHandler(async (req, res, next) => {
   if (req.user && req.user.verified) {
-    // if user is verified continue
-    next ();
-    return;
+    // If user is verified, continue
+    next();
+  } else {
+    // If not verified, send 403 Forbidden
+    res.status(403).json({ message: 'Bitte bestätige deine E-Mail Adresse' });
   }
-  // if not verified send 403 forbidden
-  res.status (403).json ({message: 'Bitte bestätige deine E-Mail Adresse'});
-})
+});
