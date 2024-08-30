@@ -67,6 +67,13 @@ function TextArea() {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage(e);
+    }
+  };
+
   return (
     <form className="relative flex items-center" onSubmit={handleSendMessage}>
       <div className="relative flex-1">
@@ -77,6 +84,7 @@ function TextArea() {
           value={message}
           ref={textAreaRef}
           onChange={handleOnChange}
+          onKeyDown={handleKeyDown}
         ></textarea>
         <button
           type="button"
