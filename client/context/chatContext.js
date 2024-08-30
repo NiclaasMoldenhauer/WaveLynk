@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import io from "socket.io-client";
 import { useUserContext } from "./userContext";
@@ -11,24 +11,35 @@ const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 
 export const ChatProvider = ({ children }) => {
   const { user, setSearchResults, setUser } = useUserContext();
-
   const userId = user?._id;
-
   const router = useRouter();
   
+  const [chats, setChats] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const [allChatsData, setAllChatsData] = useState([]);
+  const [selectedChat, setSelectedChat] = useState(null);
+  const [activeChatData, setActiveChatData] = useState({});
+  const [socket, setSocket] = useState(null);
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const [arrivedMessage, setArrivedMessage] = useState(null);
 
-  // state for chat
-  const [chats, setChats] = React.useState([]);
-  const [messages, setMessages] = React.useState([]);
-  const [allChatsData, setAllChatsData] = React.useState([]);
-  const [selectedChat, setSelectedChat] = React.useState(null);
-  const [activeChatData, setActiveChatData] = React.useState({});
-  const [socket, setSocket] = React.useState(null);
-  const [onlineUsers, setOnlineUsers] = React.useState([]);
-  const [arrivedMessage, setArrivedMessage] = React.useState(null);
+  const addMessageToChat = useCallback((message, chatId) => {
+    setMessages(prevMessages => [...prevMessages, message]);
+    setChats(prevChats => {
+      return prevChats.map(chat => {
+        if (chat._id === chatId) {
+          return {
+            ...chat,
+            lastMessage: message,
+            updatedAt: new Date().toISOString(),
+          };
+        }
+        return chat;
+      }).sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+    });
+  }, []);
 
   useEffect(() => {
-    // Erstelle einen Socket
     const newSocket = io(serverUrl);
 
     newSocket.on("connect", () => {
@@ -49,24 +60,49 @@ export const ChatProvider = ({ children }) => {
           return { ...userData, online: userData.online };
         })
       );
-
       setOnlineUsers(onlineFriends.filter(friend => friend.friends.includes(userId)));
+    });
+
+    newSocket.on("get message", (data) => {
+      const newMessage = {
+        _id: Date.now(),
+        sender: data.senderId,
+        content: data.text,
+        createdAt: new Date().toISOString(),
+      };
+
+      if (selectedChat && selectedChat.participants.includes(data.senderId)) {
+        addMessageToChat(newMessage, selectedChat._id);
+      } else {
+        setChats(prevChats => {
+          const updatedChats = prevChats.map(chat => {
+            if (chat.participants.includes(data.senderId)) {
+              return {
+                ...chat,
+                lastMessage: newMessage,
+                updatedAt: new Date().toISOString(),
+              };
+            }
+            return chat;
+          }).sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+          return updatedChats;
+        });
+      }
     });
 
     setSocket(newSocket);
 
-    // Cleanup wenn Komponente beendet wird
     return () => {
       newSocket.disconnect();
+      newSocket.off("get users");
+      newSocket.off("get message");
     };
-  }, [userId]);
+  }, [userId, selectedChat, addMessageToChat]);
 
   useEffect(() => {
-    // Verhindern von Events wenn der Nutzer nicht eingeloggt ist
     if (!user) return;
-
-    socket?.emit("User hinzufügen", user._Id);
-    // listen for changes
+    socket?.emit("User hinzufügen", user._id);
+    
     socket?.on("User online", (users) => {
       const getOnlineUsers = async () => {
         try {
@@ -76,16 +112,8 @@ export const ChatProvider = ({ children }) => {
               return userData;
             })
           );
-          // Aktuellen Nutzer von der Liste entfernen
-          const onlineFriends = usersOnline.filter(
-            (user) => user._id !== userId
-          );
-
-          // Checken ob aktueller Nutzer mit online user befreundet ist
-          const isFriends = onlineFriends.filter((friend) =>
-            users.friends.includes(friend._id)
-          );
-
+          const onlineFriends = usersOnline.filter(user => user._id !== userId);
+          const isFriends = onlineFriends.filter(friend => users.friends.includes(friend._id));
           setOnlineUsers(isFriends);
         } catch (error) {
           console.log("Fehler beim Abrufen der Online-Nutzer", error.message);
@@ -105,28 +133,25 @@ export const ChatProvider = ({ children }) => {
     });
 
     return () => {
-      socket?.off("get users");
+      socket?.off("User online");
       socket?.off("get message");
     };
   }, [user]);
 
   useEffect(() => {
-    // Prüfen ob Nachricht vom participant in aktivem Chat ist
     if (
       arrivedMessage &&
       selectedChat &&
       selectedChat.participants.includes(arrivedMessage.sender)
     ) {
-      // Message State updated
-      setMessages((prev) => [...prev, arrivedMessage]);
+      setMessages(prev => [...prev, arrivedMessage]);
     }
   }, [arrivedMessage, selectedChat?._id]);
 
   const getUserById = async (id) => {
     try {
-
       const res = await axios.get(`${serverUrl}/api/v1/user/${id}`, {
-        withCredentials: true, // Falls Cookies für die Authentifizierung verwendet werden
+        withCredentials: true,
       });
       return res.data;
     } catch (error) {
@@ -143,28 +168,20 @@ export const ChatProvider = ({ children }) => {
   // fetch user Chats
   const fetchChats = async () => {
     if (!userId) return;
-
     try {
-        const res = await axios.get(`${serverUrl}/api/v1/chats/${userId}`);
-  
-        setChats(res.data);
-      } catch (error) {
-        console.log("Fehler beim Abrufen von fetchChats", error.message);
-      }
-    };
-
+      const res = await axios.get(`${serverUrl}/api/v1/chats/${userId}`);
+      setChats(res.data);
+    } catch (error) {
+      console.log("Fehler beim Abrufen von fetchChats", error.message);
+    }
+  }
 
   // fetch Nachrichten für chat
   const fetchMessages = async (chatId, limit = 15, offset = 0) => {
     try {
       const res = await axios.get(`${serverUrl}/api/v1/messages/${chatId}`, {
-        params: {
-          limit,
-          offset,
-        },
+        params: { limit, offset },
       });
-
-      // set messages in state
       setMessages(res.data);
     } catch (error) {
       console.log("Fehler beim Abrufen von fetchMessages", error.message);
@@ -175,7 +192,6 @@ export const ChatProvider = ({ children }) => {
     if (!chatId) return;
     try {
       const res = await axios.get(`${serverUrl}/api/v1/messages/${chatId}`);
-
       return res.data;
     } catch (error) {
       console.log("Fehler beim Abrufen von fetchAllMessages", error.message);
@@ -188,15 +204,13 @@ export const ChatProvider = ({ children }) => {
       const updatedChats = await Promise.all(
         chats.map(async (chat) => {
           const participantsData = await Promise.all(
-            // fetch user data for each participant
             chat.participants
-              .filter((participant) => participant !== userId)
+              .filter(participant => participant !== userId)
               .map(async (participant) => {
                 const user = await getUserById(participant);
                 return user;
               })
           );
-
           return {
             ...chat,
             participantsData,
@@ -255,12 +269,9 @@ export const ChatProvider = ({ children }) => {
   // handle selected chat
   const handleSelectedChat = async (chat) => {
     setSelectedChat(chat);
-
-    // user finden der nicht der aktuelle user ist
     const isNotLoggedInUser = chat.participants.find(
       (participant) => participant !== userId
     );
-
     const data = await getUserById(isNotLoggedInUser);
     setActiveChatData(data);
   };
@@ -272,10 +283,7 @@ export const ChatProvider = ({ children }) => {
         senderId,
         receiverId,
       });
-
-      // update des chat states
-      setChats((prev) => [...prev, res.data]);
-
+      setChats(prev => [...prev, res.data]);
       return res.data;
     } catch (error) {
       console.log("Fehler beim Erstellen eines neuen Chats", error.message);

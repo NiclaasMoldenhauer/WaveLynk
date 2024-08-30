@@ -47,7 +47,7 @@ function ChatItem({ user, active, onClick, chatId }: ChatItemProps) {
 
   return (
     <div
-      className={`px-4 py-3 flex gap-2 items-center border-b-2 border-white dark:border-[#3C3C3C]/65 cursor-pointer ${
+      className={`px-5 py-4 flex gap-2 items-center border-b-2 border-white dark:border-[#3C3C3C]/65 cursor-pointer ${
         active ? "bg-blue-100 dark:bg-white/5" : ""
       }`}
       onClick={onClick}
