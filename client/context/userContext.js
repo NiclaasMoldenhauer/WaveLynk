@@ -76,7 +76,6 @@ export const UserContextProvider = ({children}) => {
       const setCookieHeader = res.headers['set-cookie'];
       const token =
         setCookieHeader && setCookieHeader.split ('=')[1].split (';')[0];
-      localStorage.setItem ('authToken', response.data.token);
       localStorage.setItem ('jwtToken', token); // JWT in LocalStorage speichern
 
       const authToken = localStorage.getItem ('authToken');
@@ -99,7 +98,7 @@ export const UserContextProvider = ({children}) => {
       router.push ('/');
     } catch (error) {
       console.log ('Fehler beim Login', error);
-      toast.error (error.response.data.message || 'Login fehlgeschlagen');
+      toast.error (error.response?.data?.message) || 'Login fehlgeschlagen';
     }
   };
 

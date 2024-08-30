@@ -4,20 +4,19 @@ import { useUserContext } from "@/context/userContext";
 import Sender from "../Sender/Sender";
 import Receiver from "../Receiver/Receiver";
 
-// Define an interface for your message type
 interface IMessage {
   _id: string;
   sender: string;
   content: string;
   status: string;
   createdAt: string;
+  type?: 'text' | 'gif';
 }
 
 function Body() {
   const { messages, setMessages, selectedChat, socket } = useChatContext();
   const { user } = useUserContext();
   const userId = user?._id;
-  // Explicitly type the ref
   const messageBodyRef = useRef<HTMLDivElement | null>(null);
 
   const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
@@ -59,11 +58,31 @@ function Body() {
     }
   }, [socket, selectedChat]);
 
+  const renderMessage = (message: IMessage) => {
+    console.log('Rendering message:', message); // Keep this log
+    const MessageComponent = message.sender === userId ? Sender : Receiver;
+
+    return (
+      <div key={message._id} className={message.sender === userId ? "self-end mb-2" : "mb-2"}>
+        <MessageComponent
+          messageId={message._id}
+          status={message.status}
+          content={message.content}
+          createdAt={message.createdAt}
+          type={message.type || 'text'}
+        />
+      </div>
+    );
+  };
+
   return (
     <div
       ref={messageBodyRef}
       className="message-body relative flex-1 p-4 overflow-y-auto"
     >
+      <div className="relative flex flex-col">
+      {messages.map(renderMessage)}
+      </div>
       <div className="relative flex flex-col">
         {messages.map((message: IMessage) =>
           message.sender === userId ? (
@@ -71,16 +90,14 @@ function Body() {
               <Sender
                 status={message.status}
                 content={message.content}
-                createdAt={message.createdAt}
-              />
+                createdAt={message.createdAt} type={"text"}              />
             </div>
           ) : (
             <div key={message._id}>
               <Receiver
-                messageId={message._id}
-                content={message.content}
-                createdAt={message.createdAt}
-              />
+                  messageId={message._id}
+                  content={message.content}
+                  createdAt={message.createdAt} type={"text"}              />
             </div>
           )
         )}

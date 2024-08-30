@@ -1,13 +1,16 @@
-"use client"
-import { send } from "@/utils/Icons";
+"use client";
 import React, { useEffect, useRef, useState } from "react";
 import EmojiPicker from "emoji-picker-react";
 import { useChatContext } from "@/context/chatContext";
 import useDetectOutsideClick from "@/app/hooks/useDetectOutsideClick";
 import { useUserContext } from "@/context/userContext";
+import { send, gif } from "@/utils/Icons";
+import GifPicker from "../../GifPicker/GifPicker";
+
 
 function TextArea() {
-  const { selectedChat, sendMessage, activeChatData, socket } = useChatContext();
+  const { selectedChat, sendMessage, activeChatData, socket } =
+    useChatContext();
   const user = useUserContext().user;
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -17,6 +20,48 @@ function TextArea() {
   const [toggleEmoji, setToggleEmoji] = useState(false);
 
   useDetectOutsideClick(emojiElemRef, setToggleEmoji);
+
+  const [toggleGif, setToggleGif] = useState(false);
+  const gifElemRef = useRef<HTMLDivElement>(null);
+
+  useDetectOutsideClick(gifElemRef, setToggleGif);
+
+  const handleToggleGif = () => {
+    setToggleGif((prev) => !prev);
+    setToggleEmoji(false);
+  };
+
+  const handleSendGif = (gifUrl: string) => {
+    if (socket) {
+      const newMessage = {
+        sender: user?._id,
+        receiver: activeChatData?._id,
+        content: gifUrl,
+        chatId: selectedChat?._id,
+        type: 'gif' as const
+      };
+      console.log('Sending GIF message:', newMessage); // Add this log
+      sendMessage(newMessage);
+      socket.emit("new message", newMessage);
+      setToggleGif(false);
+    }
+  };
+
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (message.trim() && socket) {
+      const newMessage = {
+        sender: user?._id,
+        receiver: activeChatData?._id,
+        content: message,
+        chatId: selectedChat?._id,
+        type: 'text' as const
+      };
+      sendMessage(newMessage);
+      socket.emit("new message", newMessage);
+      setMessage("");
+    }
+  };
 
   const handleOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value);
@@ -52,23 +97,9 @@ function TextArea() {
     autoResize();
   }, [message]);
 
-  const handleSendMessage = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (message.trim() && socket) {
-      const newMessage = {
-        sender: user?._id,
-        receiver: activeChatData?._id,
-        content: message,
-        chatId: selectedChat?._id,
-      };
-      sendMessage(newMessage);
-      socket.emit("new message", newMessage);
-      setMessage("");
-    }
-  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage(e);
     }
@@ -86,6 +117,13 @@ function TextArea() {
           onChange={handleOnChange}
           onKeyDown={handleKeyDown}
         ></textarea>
+        <button
+          type="button"
+          className="absolute top-[22px] right-12 text-[#7263f3] translate-y-[-50%] text-2xl"
+          onClick={handleToggleGif}
+        >
+          {gif}
+        </button>
         <button
           type="button"
           className="absolute top-[22px] right-3 text-[#aaa] translate-y-[-50%] text-2xl"
@@ -106,6 +144,11 @@ function TextArea() {
       >
         {send}
       </button>
+      {toggleGif && (
+        <div ref={gifElemRef} className="absolute right-0 bottom-[72px] z-10">
+          <GifPicker onGifSelect={handleSendGif} />
+        </div>
+      )}
       {toggleEmoji && (
         <div ref={emojiElemRef} className="absolute right-0 bottom-[72px] z-10">
           <EmojiPicker

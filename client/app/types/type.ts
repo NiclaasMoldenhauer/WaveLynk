@@ -23,6 +23,7 @@ interface IMessage {
     status: string;
     updatedAt: string;
     _id: string;
+    type?: 'text' | 'gif';
 }
 
 interface IChat {

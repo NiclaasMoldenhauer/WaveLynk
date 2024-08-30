@@ -1,17 +1,18 @@
 "use client";
 import { useUserContext } from "@/context/userContext";
 import { formatDateBasedOnTime } from "@/utils/dates";
-import Image from "next/image";
 import React from "react";
 import ProfileImage from "../../ProfileImage/ProfileImage";
 
+
 interface ISender {
-  content: string;
+  content: React.ReactNode;
   createdAt: string;
   status: string;
+  type: string;
 }
 
-function Sender({ content, createdAt, status }: ISender) {
+function Sender({ content, createdAt, status, type }: ISender) {
   const { user } = useUserContext();
   const { photo } = user || {};
 
@@ -25,12 +26,16 @@ function Sender({ content, createdAt, status }: ISender) {
               {formatDateBasedOnTime(createdAt)}
             </p>
           </div>
-          <p
-            className="py-[0.25rem] max-w-[360px] w-full  self-start px-4 border-2 rounded-tr-[30px] rounded-br-[30px] rounded-bl-[30px] border-gray-200 bg-[#a3a3a358] dark:bg-[#8f43cd]  
+          <div
+            className="py-[0.25rem] max-w-[360px] w-full self-start px-4 border-2 rounded-tr-[30px] rounded-br-[30px] rounded-bl-[30px] border-gray-200 bg-[#a3a3a358] dark:bg-[#8f43cd]  
             dark:border-[#8f43cd] text-[#12181b] dark:text-white shadow-xl"
           >
-            {content}
-          </p>
+            {type === 'gif' ? (
+              <img src={content as string} alt="GIF" className="max-w-full rounded-lg" />
+            ) : (
+              <p>{content}</p>
+            )}
+          </div>
         </div>
         <ProfileImage
           photo={photo}
